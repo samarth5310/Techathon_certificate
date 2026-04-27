@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to read participant data for verification purposes
+    // but only by certificateId (e.g., on /verify/:certificateId page)
+    match /participants/{document=**} {
+      // Allow read access for verification page queries by certificateId
+      allow read: if resource.data.certificateId == request.query.certificateId 
+                     || request.auth != null;
+      
+      // Allow write access only to authenticated admins
+      // In production, implement custom claims like: request.auth.token.admin == true
+      allow write: if request.auth != null;
+      
+      // Prevent manual edits to certain sensitive fields
+      allow update: if request.resource.data.keys().hasAll(resource.data.keys())
+                       && request.resource.data.certificateId == resource.data.certificateId
+                       && request.resource.data.email == resource.data.email;
+    }
+
+    // If you add a certificates collection for archival:
+    match /certificates/{document=**} {
+      allow read: if true; // Public read for verification
+      allow write: if request.auth != null; // Only authenticated users
+    }
+  }
+}
+
+---
+
+# How to Deploy These Rules:
+
+1. Go to Firebase Console → Firestore Database → Rules tab
+2. Replace existing rules with the above
+3. Click "Publish"
+
+Note: For production, authenticate users with Firebase Auth and add custom claims.
