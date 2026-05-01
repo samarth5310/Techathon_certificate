@@ -317,6 +317,14 @@ const GenerateCertificate = () => {
         const qrUrl = await generateQRCodeDataUrl(certId, domain)
         setQrCodeUrl(qrUrl)
         setParticipant((prev) => ({ ...prev, certificateId: certId }))
+        
+        // SAVE TO DATABASE IMMEDIATELY
+        const participantDoc = doc(db, 'participants', participant.id)
+        await updateDoc(participantDoc, {
+          certificateId: certId,
+          certificateGenerated: true
+        })
+
         await new Promise((r) => window.requestAnimationFrame(r))
         await new Promise((r) => window.requestAnimationFrame(r))
       }

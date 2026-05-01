@@ -23,7 +23,7 @@ const VerifyCertificate = () => {
         const participantsRef = collection(db, 'participants')
         const q = query(
           participantsRef,
-          where('certificateId', '==', certificateId.toUpperCase())
+          where('certificateId', '==', certificateId.trim().toUpperCase())
         )
         const snapshot = await getDocs(q)
 
