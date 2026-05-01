@@ -5,7 +5,7 @@ export const generateCertificateId = () => {
   return uuidv4().replace(/-/g, '').toUpperCase().slice(0, 16)
 }
 
-export const generateQRCodeDataUrl = async (certificateId, domain = 'http://localhost:5173') => {
+export const generateQRCodeDataUrl = async (certificateId, domain = 'https://techathon-certificates.onrender.com') => {
   try {
     const verificationUrl = `${domain}/verify/${certificateId}`
     const dataUrl = await QRCode.toDataURL(verificationUrl, {
@@ -24,9 +24,5 @@ export const generateQRCodeDataUrl = async (certificateId, domain = 'http://loca
 }
 
 export const parseQueryDomain = () => {
-  if (typeof window !== 'undefined') {
-    const baseUrl = `${window.location.protocol}//${window.location.host}`
-    return baseUrl
-  }
-  return 'http://localhost:5173'
+  return 'https://techathon-certificates.onrender.com'
 }
