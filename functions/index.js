@@ -6,7 +6,7 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore()
-const ONE_HOUR_MS = 60 * 60 * 1000
+const ONE_DAY_MS = 24 * 60 * 60 * 1000
 
 const setCorsHeaders = (res) => {
   res.set('Access-Control-Allow-Origin', '*')
@@ -106,10 +106,10 @@ export const sendCertificateEmail = onRequest(async (req, res) => {
     }
 
     const sentAt = toDate(participant.certificateEmailSentAt)
-    if (sentAt && Date.now() - sentAt.getTime() < ONE_HOUR_MS) {
-      const retryAfterMinutes = (ONE_HOUR_MS - (Date.now() - sentAt.getTime())) / 60000
+    if (sentAt && Date.now() - sentAt.getTime() < ONE_DAY_MS) {
+      const retryAfterMinutes = (ONE_DAY_MS - (Date.now() - sentAt.getTime())) / 60000
       return res.status(429).json({
-        message: 'Certificate email already sent within the last hour.',
+        message: 'Certificate email already sent within the last 24 hours.',
         retryAfterMinutes,
       })
     }
@@ -120,13 +120,17 @@ export const sendCertificateEmail = onRequest(async (req, res) => {
     }
 
     const attachmentName = fileName || `${participantName.replace(/\s+/g, '_')}_Techathon1.0.pdf`
+    
+    // Sanitize base64 string to ensure Brevo doesn't fail
+    const sanitizedBase64 = String(pdfBase64).replace(/^data:application\/pdf;base64,/, '')
+    
     await sendBrevoEmail({
       to: storedEmail,
       subject: `${eventName || 'Techathon1.0'} Certificate`,
-      text: `Hello ${participantName},\n\nYour certificate for ${eventName || 'Techathon1.0'} is attached as a PDF.\nCertificate ID: ${resolvedCertificateId}\n\nRegards,\nTechathon1.0 Team`,
-      html: `<p>Hello ${participantName},</p><p>Your certificate for <strong>${eventName || 'Techathon1.0'}</strong> is attached as a PDF.</p><p><strong>Certificate ID:</strong> ${resolvedCertificateId}</p><p>Regards,<br/>Techathon1.0 Team</p>`,
+      text: `Hello ${participantName},\n\nYour certificate for ${eventName || 'Techathon1.0'} is attached as a PDF.\nCertificate ID: ${resolvedCertificateId}\n\nRegards,\nEvent Team`,
+      html: `<p>Hello ${participantName},</p><p>Your certificate for <strong>${eventName || 'Techathon1.0'}</strong> is attached as a PDF.</p><p><strong>Certificate ID:</strong> ${resolvedCertificateId}</p><p>Regards,<br/>Event Team</p>`,
       attachmentName,
-      pdfBase64: String(pdfBase64),
+      pdfBase64: sanitizedBase64,
     })
 
     await participantRef.update({

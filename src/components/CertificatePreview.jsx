@@ -1,4 +1,11 @@
 import Template1 from './Template1'
+import Template2 from './Template2'
+
+const isTechathon = (name) => {
+  if (!name) return true
+  const lower = name.toLowerCase().replace(/\s+/g, '')
+  return lower === 'techathon1.0' || lower === 'techathon1.0' || lower === 'techathon'
+}
 
 const CertificatePreview = ({
   showPreview = true,
@@ -7,8 +14,11 @@ const CertificatePreview = ({
   certificateDate,
   certificateId,
   qrCodeUrl,
+  department,
   previewRef,
 }) => {
+  const useTechathonTemplate = isTechathon(eventName)
+
   return (
     <div style={{
       background: 'var(--bg-card)',
@@ -24,7 +34,7 @@ const CertificatePreview = ({
           maxWidth: '1123px',
           margin: '0 auto',
           overflow: 'hidden',
-          backgroundColor: '#fff9f9',
+          backgroundColor: useTechathonTemplate ? '#fff9f9' : '#fdf8f0',
         }}
       >
         <div style={{
@@ -34,13 +44,24 @@ const CertificatePreview = ({
           overflow: 'hidden',
         }}>
           {showPreview ? (
-            <Template1
-              participantName={participantName}
-              eventName={eventName}
-              certificateDate={certificateDate}
-              certificateId={certificateId}
-              qrCodeUrl={qrCodeUrl}
-            />
+            useTechathonTemplate ? (
+              <Template1
+                participantName={participantName}
+                eventName={eventName}
+                certificateDate={certificateDate}
+                certificateId={certificateId}
+                qrCodeUrl={qrCodeUrl}
+              />
+            ) : (
+              <Template2
+                participantName={participantName}
+                eventName={eventName}
+                certificateDate={certificateDate}
+                certificateId={certificateId}
+                qrCodeUrl={qrCodeUrl}
+                department={department}
+              />
+            )
           ) : (
             <div style={{
               display: 'flex',

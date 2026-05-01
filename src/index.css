@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'KrinahFont';
+  src: url('/font/Krinahpersonal.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --bg-dark: #0a0a0a;
   --bg-card: #111111;
@@ -36,27 +43,27 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   background-image:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       transparent,
       transparent 60px,
       rgba(255, 62, 62, 0.025) 60px,
-      rgba(255, 62, 62, 0.025) 61px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      rgba(255, 62, 62, 0.025) 61px),
+    repeating-linear-gradient(90deg,
       transparent,
       transparent 60px,
       rgba(255, 62, 62, 0.025) 60px,
-      rgba(255, 62, 62, 0.025) 61px
-    );
+      rgba(255, 62, 62, 0.025) 61px);
 }
 
 #root {
   min-height: 100vh;
 }
 
-body, button, input, textarea, select {
+body,
+button,
+input,
+textarea,
+select {
   font-size: 16px;
 }
 
@@ -66,7 +73,13 @@ img {
   height: auto;
 }
 
-h1, h2, h3, p, span, label, button {
+h1,
+h2,
+h3,
+p,
+span,
+label,
+button {
   overflow-wrap: anywhere;
 }
 
@@ -133,10 +146,21 @@ h1, h2, h3, p, span, label, button {
   box-shadow: 4px 4px 0px #000 !important;
 }
 
-.brutal-btn-cyan { background: var(--accent-cyan); }
-.brutal-btn-yellow { background: var(--accent-yellow); }
-.brutal-btn-lime { background: var(--accent-lime); }
-.brutal-btn-magenta { background: var(--accent-magenta); }
+.brutal-btn-cyan {
+  background: var(--accent-cyan);
+}
+
+.brutal-btn-yellow {
+  background: var(--accent-yellow);
+}
+
+.brutal-btn-lime {
+  background: var(--accent-lime);
+}
+
+.brutal-btn-magenta {
+  background: var(--accent-magenta);
+}
 
 /* ═══════════════════════════════════════════
    INPUTS
@@ -215,8 +239,13 @@ h1, h2, h3, p, span, label, button {
 }
 
 @keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -242,8 +271,15 @@ h1, h2, h3, p, span, label, button {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -251,8 +287,10 @@ h1, h2, h3, p, span, label, button {
    ═══════════════════════════════════════════ */
 .noise-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 9999;
   opacity: 0.015;
@@ -311,8 +349,15 @@ h1, h2, h3, p, span, label, button {
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -336,6 +381,7 @@ h1, h2, h3, p, span, label, button {
   .page-container {
     padding: 32px 24px;
   }
+
   .section-gap {
     margin-top: 24px;
   }
@@ -345,6 +391,7 @@ h1, h2, h3, p, span, label, button {
   .page-container {
     padding: 40px 32px;
   }
+
   .section-gap {
     margin-top: 28px;
   }
@@ -354,6 +401,7 @@ h1, h2, h3, p, span, label, button {
   .page-container {
     padding: 48px 40px;
   }
+
   .section-gap {
     margin-top: 32px;
   }
@@ -363,15 +411,18 @@ h1, h2, h3, p, span, label, button {
   .brutal-card {
     box-shadow: 4px 4px 0px #000;
   }
+
   .brutal-btn {
     box-shadow: 3px 3px 0px #000;
     font-size: 12px;
     padding: 10px 16px;
   }
+
   .brutal-input {
     font-size: 13px;
     padding: 10px 12px;
   }
+
   .brutal-ticker {
     font-size: 10px;
     padding: 6px 0;
