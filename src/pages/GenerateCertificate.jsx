@@ -106,7 +106,12 @@ const GenerateCertificate = () => {
         const dbEventName = (data.eventName || 'Techathon 1.0').replace(/\s+/g, '').toLowerCase()
         const formEventName = cleanEventName.replace(/\s+/g, '').toLowerCase()
         
-        return participantName === cleanName.toLowerCase() && dbEventName === formEventName
+        // Custom logic: Treat "techathon" and "techathon1.0" as the same
+        const isTechathonMatch = 
+          (dbEventName === 'techathon' && formEventName === 'techathon1.0') ||
+          (dbEventName === 'techathon1.0' && formEventName === 'techathon')
+
+        return participantName === cleanName.toLowerCase() && (dbEventName === formEventName || isTechathonMatch)
       })
 
       if (!match) {
