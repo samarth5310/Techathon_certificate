@@ -8,7 +8,7 @@ import { db } from '../firebase/config'
 import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '../utils/certificateUtils'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
-const ONE_DAY_MS = 24 * 60 * 60 * 1000
+const ONE_DAY_MS = 24 * 60 * 60 * 1000 // Standard 24 hours
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000
 
 const toDisplayDate = (value) => {
@@ -387,8 +387,10 @@ const GenerateCertificate = () => {
       ? new Date(participant.certificateEmailSentAt)
       : null
 
-  const canSendEmail = !certificateEmailSentAt || Date.now() - certificateEmailSentAt.getTime() >= ONE_DAY_MS
-  const nextAllowedAt = certificateEmailSentAt ? new Date(certificateEmailSentAt.getTime() + ONE_DAY_MS) : null
+  const isTestingEmail = participant?.email?.trim().toLowerCase() === 'ffgzk5310@gmail.com'
+  const cooldownPeriod = isTestingEmail ? 1 * 60 * 1000 : ONE_DAY_MS
+  const canSendEmail = !certificateEmailSentAt || Date.now() - certificateEmailSentAt.getTime() >= cooldownPeriod
+  const nextAllowedAt = certificateEmailSentAt ? new Date(certificateEmailSentAt.getTime() + cooldownPeriod) : null
 
   // Download cooldown (2 hours, stored in localStorage)
   const dlKey = `cert_dl_${formData.email.trim().toLowerCase()}_${formData.eventName.trim()}`
