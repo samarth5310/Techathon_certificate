@@ -13,37 +13,44 @@ const VerifyCertificate = () => {
 
   useEffect(() => {
     const fetchCertificate = async () => {
-      if (!certificateId) {
+      const idToSearch = (certificateId || '').trim()
+      if (!idToSearch) {
         setError('No certificate ID provided')
         setLoading(false)
         return
       }
 
+      console.log('Searching for ID:', idToSearch)
+
       try {
         const participantsRef = collection(db, 'participants')
-        const cleanId = certificateId.trim()
         
-        // Search for the ID in its original case and in Uppercase
-        const qOriginal = query(participantsRef, where('certificateId', '==', cleanId))
-        const qUpper = query(participantsRef, where('certificateId', '==', cleanId.toUpperCase()))
+        // 1. Search by original case
+        const q1 = query(participantsRef, where('certificateId', '==', idToSearch))
+        // 2. Search by UPPERCASE (most common)
+        const q2 = query(participantsRef, where('certificateId', '==', idToSearch.toUpperCase()))
+        // 3. Search by lowercase (fallback)
+        const q3 = query(participantsRef, where('certificateId', '==', idToSearch.toLowerCase()))
         
-        const [snapOriginal, snapUpper] = await Promise.all([
-          getDocs(qOriginal),
-          getDocs(qUpper)
+        const [s1, s2, s3] = await Promise.all([
+          getDocs(q1),
+          getDocs(q2),
+          getDocs(q3)
         ])
 
-        const snapshot = !snapOriginal.empty ? snapOriginal : snapUpper;
+        const snapshot = !s1.empty ? s1 : !s2.empty ? s2 : s3;
 
         if (snapshot.empty) {
-          setError('Certificate not found or invalid')
+          setError(`Certificate [${idToSearch}] not found in database`)
           setCertificate(null)
         } else {
-          const doc = snapshot.docs[0]
-          setCertificate({ id: doc.id, ...doc.data() })
+          const docData = snapshot.docs[0]
+          setCertificate({ id: docData.id, ...docData.data() })
+          setError('')
         }
       } catch (fetchError) {
         console.error('Error fetching certificate:', fetchError)
-        setError('Unable to verify certificate at this time')
+        setError('Verification service temporarily unavailable')
       } finally {
         setLoading(false)
       }
