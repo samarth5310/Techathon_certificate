@@ -126,6 +126,21 @@ const GenerateCertificate = () => {
         const domain = parseQueryDomain()
         const qrUrl = await generateQRCodeDataUrl(participantData.certificateId, domain)
         setQrCodeUrl(qrUrl)
+      } else {
+        // AUTO-GENERATE ID IF MISSING
+        const newId = generateCertificateId()
+        const domain = parseQueryDomain()
+        const qrUrl = await generateQRCodeDataUrl(newId, domain)
+        setQrCodeUrl(qrUrl)
+        
+        // Save to DB immediately
+        const participantRef = doc(db, 'participants', participantData.id)
+        await updateDoc(participantRef, {
+          certificateId: newId
+        })
+        
+        // Update local state
+        setParticipant(prev => ({ ...prev, certificateId: newId }))
       }
     } catch (validationError) {
       setError('// ERROR: Verification failed. Retry.')

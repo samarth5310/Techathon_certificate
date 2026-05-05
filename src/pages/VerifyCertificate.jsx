@@ -21,11 +21,18 @@ const VerifyCertificate = () => {
 
       try {
         const participantsRef = collection(db, 'participants')
-        const q = query(
-          participantsRef,
-          where('certificateId', '==', certificateId.trim().toUpperCase())
-        )
-        const snapshot = await getDocs(q)
+        const cleanId = certificateId.trim()
+        
+        // Search for the ID in its original case and in Uppercase
+        const qOriginal = query(participantsRef, where('certificateId', '==', cleanId))
+        const qUpper = query(participantsRef, where('certificateId', '==', cleanId.toUpperCase()))
+        
+        const [snapOriginal, snapUpper] = await Promise.all([
+          getDocs(qOriginal),
+          getDocs(qUpper)
+        ])
+
+        const snapshot = !snapOriginal.empty ? snapOriginal : snapUpper;
 
         if (snapshot.empty) {
           setError('Certificate not found or invalid')
