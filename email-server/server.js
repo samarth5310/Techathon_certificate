@@ -57,14 +57,40 @@ app.post('/api/send-certificate-email', async (req, res) => {
         to: [{ email: participantEmail }],
         subject: `${eventName || 'Techathon 1.0'} Certificate - ${participantName}`,
         htmlContent: `
-          <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-            <h2>Congratulations ${participantName}!</h2>
-            <p>You have successfully participated in <strong>${eventName || 'Techathon 1.0'}</strong>.</p>
-            <p>Your official certificate is attached to this email.</p>
-            <p><strong>Certificate ID:</strong> ${certificateId}</p>
-            <br />
-            <p>Best regards,</p>
-            <p><strong>The Event Team</strong></p>
+          <div style="background-color: #050505; padding: 40px 20px; font-family: 'Helvetica', 'Arial', sans-serif; color: #ffffff; text-align: center;">
+            <div style="max-width: 600px; margin: 0 auto; border: 4px solid #fffb00; padding: 40px; background-color: #000000; box-shadow: 12px 12px 0px #ff0055;">
+              
+              <!-- Header -->
+              <h1 style="color: #fffb00; font-size: 36px; text-transform: uppercase; margin: 0 0 20px 0; letter-spacing: 4px; border-bottom: 2px solid #00f2ff; padding-bottom: 10px;">
+                CONGRATULATIONS
+              </h1>
+              
+              <p style="font-size: 18px; line-height: 1.6; color: #e0e0e0; margin-bottom: 30px;">
+                Hello <strong style="color: #00f2ff;">${participantName}</strong>,<br />
+                You have successfully conquered <strong>${eventName || 'TECHATHON 1.0'}</strong>.
+              </p>
+              
+              <!-- Main Message -->
+              <div style="background-color: #111; border: 1px solid #333; padding: 25px; margin-bottom: 30px;">
+                <p style="margin: 0; font-size: 16px; color: #888; text-transform: uppercase; letter-spacing: 2px;">Your Achievement is Attached</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">// Official Digital Certificate PDF Included</p>
+              </div>
+
+              <!-- Certificate ID Box -->
+              <div style="border: 2px dashed #ff0055; padding: 15px; display: inline-block; margin-bottom: 30px;">
+                <span style="color: #888; font-size: 12px; display: block; margin-bottom: 5px;">CERTIFICATE_ID</span>
+                <span style="color: #ff0055; font-size: 20px; font-weight: bold; letter-spacing: 1px;">${certificateId}</span>
+              </div>
+
+              <!-- Footer -->
+              <div style="margin-top: 20px; border-top: 1px solid #222; padding-top: 20px;">
+                <p style="font-size: 12px; color: #444; margin: 0;">
+                  BGMIT INNOVATION COUNCIL © 2026<br />
+                  DEPARTMENT OF CSE & AIML
+                </p>
+              </div>
+
+            </div>
           </div>
         `,
         attachment: [
