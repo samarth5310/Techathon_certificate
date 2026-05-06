@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDocs, getDoc, query, updateDoc, where, setDoc, increment } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
 import CertificatePreview from '../components/CertificatePreview'
 import { db } from '../firebase/config'
@@ -24,6 +24,32 @@ const toDisplayDate = (value) => {
 
 const GenerateCertificate = () => {
   const navigate = useNavigate()
+  const [viewCount, setViewCount] = useState(0)
+
+  useEffect(() => {
+    const trackViews = async () => {
+      try {
+        const statsRef = doc(db, 'stats', 'visitorCount')
+        // Increment atomic value in Firestore
+        await updateDoc(statsRef, {
+          views: increment(1)
+        })
+        const snap = await getDoc(statsRef)
+        if (snap.exists()) {
+          setViewCount(snap.data().views)
+        }
+      } catch (err) {
+        // If doc doesn't exist, create it
+        try {
+          await setDoc(doc(db, 'stats', 'visitorCount'), { views: 1 })
+          setViewCount(1)
+        } catch (e) {
+          console.error('Error tracking views:', e)
+        }
+      }
+    }
+    trackViews()
+  }, [])
   const certificateRef = useRef(null)
 
   const [formData, setFormData] = useState({ name: '', email: '', eventName: '', eventDate: '' })
@@ -416,6 +442,31 @@ const GenerateCertificate = () => {
   return (
     <main style={{ minHeight: '100vh', position: 'relative' }}>
       <div className="noise-overlay"></div>
+
+      {/* ═══ VIEW COUNTER ═══ */}
+      <div style={{
+        position: 'fixed',
+        top: '15px',
+        right: '20px',
+        zIndex: 1000,
+        pointerEvents: 'none'
+      }}>
+        <div className="brutal-card" style={{
+          padding: '6px 12px',
+          background: 'var(--bg-main)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '4px 4px 0 #000',
+          border: '2px solid #fff',
+          transform: 'rotate(1deg)'
+        }}>
+          <div style={{ width: '8px', height: '8px', background: '#00ff88', borderRadius: '50%', boxShadow: '0 0 10px #00ff88' }}></div>
+          <span className="mono" style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '1px', color: '#fff' }}>
+            VIEWS: {viewCount.toLocaleString()}
+          </span>
+        </div>
+      </div>
 
       {/* ═══ TICKER BAR ═══ */}
       <div className="brutal-ticker">
