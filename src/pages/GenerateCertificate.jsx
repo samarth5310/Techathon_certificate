@@ -429,15 +429,13 @@ const GenerateCertificate = () => {
       : null
 
   const isTestingEmail = participant?.email?.trim().toLowerCase() === 'ffgzk5310@gmail.com'
-  const cooldownPeriod = isTestingEmail ? 1 * 60 * 1000 : ONE_DAY_MS
+  const cooldownPeriod = isTestingEmail ? 2 * 60 * 1000 : ONE_DAY_MS // 2 minutes for test email
   const canSendEmail = !certificateEmailSentAt || Date.now() - certificateEmailSentAt.getTime() >= cooldownPeriod
   const nextAllowedAt = certificateEmailSentAt ? new Date(certificateEmailSentAt.getTime() + cooldownPeriod) : null
 
-  // Download cooldown (2 hours, stored in localStorage)
-  const dlKey = `cert_dl_${formData.email.trim().toLowerCase()}_${formData.eventName.trim()}`
-  const lastDownloadTs = localStorage.getItem(dlKey)
-  const canDownload = !lastDownloadTs || Date.now() - parseInt(lastDownloadTs, 10) >= TWO_HOUR_MS
-  const nextDownloadAt = lastDownloadTs ? new Date(parseInt(lastDownloadTs, 10) + TWO_HOUR_MS) : null
+  // Download cooldown removed as requested
+  const canDownload = true 
+  const nextDownloadAt = null
 
   return (
     <main style={{ minHeight: '100vh', position: 'relative' }}>
@@ -709,7 +707,7 @@ const GenerateCertificate = () => {
                       id="download-pdf-btn"
                       type="button"
                       onClick={downloadCertificateLocally}
-                      disabled={downloading || !participant || !canDownload}
+                      disabled={downloading || !participant}
                       className="brutal-btn brutal-btn-yellow"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -717,7 +715,7 @@ const GenerateCertificate = () => {
                         <polyline points="7 10 12 15 17 10"/>
                         <line x1="12" x2="12" y1="15" y2="3"/>
                       </svg>
-                      {downloading ? '[ DOWNLOADING... ]' : !canDownload ? '[ COOLDOWN ]' : 'DOWNLOAD ↓'}
+                      {downloading ? '[ DOWNLOADING... ]' : 'DOWNLOAD ↓'}
                     </button>
                     <button
                       id="send-email-btn"
@@ -735,12 +733,6 @@ const GenerateCertificate = () => {
                   </div>
                 </div>
 
-                {/* Download cooldown notice */}
-                {!canDownload && nextDownloadAt && (
-                  <div className="msg-bar msg-bar-warn" style={{ marginTop: '16px' }}>
-                    // DOWNLOAD COOLDOWN: Next download after {nextDownloadAt.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </div>
-                )}
 
                 {/* Email cooldown notice */}
                 {certificateEmailSentAt && !canSendEmail && (
