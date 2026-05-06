@@ -444,7 +444,7 @@ const GenerateCertificate = () => {
       {/* ═══ VIEW COUNTER ═══ */}
       <div style={{
         position: 'fixed',
-        top: '15px',
+        bottom: '20px',
         right: '20px',
         zIndex: 1000,
         pointerEvents: 'none'
