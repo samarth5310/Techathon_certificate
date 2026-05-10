@@ -292,6 +292,13 @@ const AdminPanel = () => {
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <button
+                  onClick={() => navigate('/admin/bulk-email')}
+                  className="brutal-btn brutal-btn-yellow"
+                  style={{ padding: '6px 12px', fontSize: '11px', boxShadow: '2px 2px 0px #000' }}
+                >
+                  BULK EMAIL ✉
+                </button>
+                <button
                   onClick={() => navigate('/')}
                   className="brutal-btn brutal-btn-cyan"
                   style={{ padding: '6px 12px', fontSize: '11px', boxShadow: '2px 2px 0px #000' }}
