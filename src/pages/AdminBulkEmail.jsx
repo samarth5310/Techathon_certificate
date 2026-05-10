@@ -143,37 +143,37 @@ const AdminBulkEmail = () => {
     addLog('Bulk operation complete.', 'info')
   }
 
-  if (loading) return <div style={{ padding: '40px', color: '#fff', background: '#050505', minHeight: '100vh', fontFamily: 'monospace' }}>Loading data...</div>
+  if (loading) return <div style={{ padding: '40px', color: 'var(--text-primary)', background: 'var(--bg-dark)', minHeight: '100vh', fontFamily: 'monospace' }}>Loading data...</div>
 
   return (
-    <div style={{ background: '#050505', color: '#fff', minHeight: '100vh', fontFamily: 'monospace', padding: '20px' }}>
+    <div style={{ background: 'var(--bg-dark)', color: 'var(--text-primary)', minHeight: '100vh', fontFamily: 'monospace', padding: '20px' }}>
       
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #333', paddingBottom: '20px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--border-brutal)', paddingBottom: '20px', marginBottom: '20px' }}>
         <div>
-          <h1 style={{ color: '#fffb00', margin: 0, fontSize: '24px' }}>BULK EMAIL DISPATCHER</h1>
-          <p style={{ color: '#888', margin: '5px 0 0 0' }}>// Send certificates directly to participant inboxes</p>
+          <h1 style={{ color: 'var(--accent-yellow)', margin: 0, fontSize: '24px' }}>BULK EMAIL DISPATCHER</h1>
+          <p style={{ color: 'var(--text-muted)', margin: '5px 0 0 0' }}>// Send certificates directly to participant inboxes</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <Link to="/admin" style={{ background: '#333', color: '#fff', padding: '8px 16px', textDecoration: 'none', border: '1px solid #555' }}>BACK TO ADMIN</Link>
-          <button onClick={handleLogout} style={{ background: '#ff0055', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }}>LOGOUT</button>
+          <Link to="/admin" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', padding: '8px 16px', textDecoration: 'none', border: '1px solid var(--border-brutal)' }}>BACK TO ADMIN</Link>
+          <button onClick={handleLogout} style={{ background: 'var(--accent-red)', color: '#000', border: 'none', padding: '8px 16px', cursor: 'pointer', fontWeight: 'bold' }}>LOGOUT</button>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '20px' }}>
         
         {/* Left: Participant List */}
-        <div style={{ background: '#111', border: '1px solid #333', padding: '20px' }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-brutal)', padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-            <h2 style={{ color: '#00f2ff', margin: 0, fontSize: '18px' }}>PARTICIPANTS ({participants.length})</h2>
-            <button onClick={toggleAll} style={{ background: '#222', color: '#fff', border: '1px solid #444', padding: '4px 12px', cursor: 'pointer' }}>
+            <h2 style={{ color: 'var(--accent-cyan)', margin: 0, fontSize: '18px' }}>PARTICIPANTS ({participants.length})</h2>
+            <button onClick={toggleAll} style={{ background: 'var(--bg-card-inner)', color: 'var(--text-primary)', border: '1px solid var(--border-brutal)', padding: '4px 12px', cursor: 'pointer' }}>
               {selectedIds.length === participants.length ? 'DESELECT ALL' : 'SELECT ALL'}
             </button>
           </div>
           
-          <div style={{ maxHeight: '600px', overflowY: 'auto', border: '1px solid #222' }}>
+          <div style={{ maxHeight: '600px', overflowY: 'auto', border: '1px solid var(--border-brutal)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-              <thead style={{ background: '#222', textAlign: 'left', position: 'sticky', top: 0 }}>
+              <thead style={{ background: 'var(--bg-card-inner)', textAlign: 'left', position: 'sticky', top: 0 }}>
                 <tr>
                   <th style={{ padding: '10px', width: '40px' }}></th>
                   <th style={{ padding: '10px' }}>NAME</th>
@@ -184,7 +184,7 @@ const AdminBulkEmail = () => {
               </thead>
               <tbody>
                 {participants.map(p => (
-                  <tr key={p.id} style={{ borderBottom: '1px solid #222', background: selectedIds.includes(p.id) ? '#1a1a1a' : 'transparent' }}>
+                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-brutal)', background: selectedIds.includes(p.id) ? 'var(--bg-input)' : 'transparent' }}>
                     <td style={{ padding: '10px', textAlign: 'center' }}>
                       <input 
                         type="checkbox" 
@@ -193,10 +193,10 @@ const AdminBulkEmail = () => {
                         disabled={sending}
                       />
                     </td>
-                    <td style={{ padding: '10px', color: '#ddd' }}>{p.name}</td>
-                    <td style={{ padding: '10px', color: '#888' }}>{p.email}</td>
-                    <td style={{ padding: '10px', color: '#00f2ff' }}>{p.eventName}</td>
-                    <td style={{ padding: '10px', fontSize: '12px', color: p.certificateEmailSentAt ? '#00ff88' : '#ff0055' }}>
+                    <td style={{ padding: '10px', color: 'var(--text-primary)' }}>{p.name}</td>
+                    <td style={{ padding: '10px', color: 'var(--text-muted)' }}>{p.email}</td>
+                    <td style={{ padding: '10px', color: 'var(--accent-cyan)' }}>{p.eventName}</td>
+                    <td style={{ padding: '10px', fontSize: '12px', color: p.certificateEmailSentAt ? 'var(--accent-lime)' : 'var(--accent-red)' }}>
                       {p.certificateEmailSentAt ? 'SENT' : 'NOT SENT'}
                     </td>
                   </tr>
@@ -210,17 +210,17 @@ const AdminBulkEmail = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           {/* Action Panel */}
-          <div style={{ background: '#111', border: '1px solid #333', padding: '20px' }}>
-            <h2 style={{ color: '#fffb00', margin: '0 0 15px 0', fontSize: '18px' }}>DISPATCH CONTROL</h2>
-            <div style={{ marginBottom: '20px', color: '#aaa', fontSize: '14px' }}>
-              Selected: <strong style={{ color: '#fff' }}>{selectedIds.length}</strong>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-brutal)', padding: '20px' }}>
+            <h2 style={{ color: 'var(--accent-yellow)', margin: '0 0 15px 0', fontSize: '18px' }}>DISPATCH CONTROL</h2>
+            <div style={{ marginBottom: '20px', color: 'var(--text-muted)', fontSize: '14px' }}>
+              Selected: <strong style={{ color: 'var(--text-primary)' }}>{selectedIds.length}</strong>
             </div>
             <button 
               onClick={sendBulkEmails} 
               disabled={sending || selectedIds.length === 0}
               style={{ 
-                width: '100%', padding: '15px', background: sending || selectedIds.length === 0 ? '#333' : '#00f2ff', 
-                color: sending || selectedIds.length === 0 ? '#666' : '#000', 
+                width: '100%', padding: '15px', background: sending || selectedIds.length === 0 ? 'var(--bg-input)' : 'var(--accent-cyan)', 
+                color: sending || selectedIds.length === 0 ? 'var(--text-muted)' : '#000', 
                 border: 'none', fontWeight: 'bold', cursor: sending || selectedIds.length === 0 ? 'not-allowed' : 'pointer',
                 fontSize: '16px'
               }}
@@ -230,29 +230,29 @@ const AdminBulkEmail = () => {
             
             {sending && (
               <div style={{ marginTop: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#888', marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '5px' }}>
                   <span>PROGRESS</span>
                   <span>{progress.current} / {progress.total}</span>
                 </div>
-                <div style={{ width: '100%', background: '#222', height: '10px' }}>
-                  <div style={{ width: `${(progress.current / progress.total) * 100}%`, background: '#00f2ff', height: '100%', transition: 'width 0.3s' }}></div>
+                <div style={{ width: '100%', background: 'var(--bg-input)', height: '10px' }}>
+                  <div style={{ width: `${(progress.current / progress.total) * 100}%`, background: 'var(--accent-cyan)', height: '100%', transition: 'width 0.3s' }}></div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginTop: '10px' }}>
-                  <span style={{ color: '#00ff88' }}>SUCCESS: {progress.success}</span>
-                  <span style={{ color: '#ff0055' }}>FAILED: {progress.failed}</span>
+                  <span style={{ color: 'var(--accent-lime)' }}>SUCCESS: {progress.success}</span>
+                  <span style={{ color: 'var(--accent-red)' }}>FAILED: {progress.failed}</span>
                 </div>
               </div>
             )}
           </div>
 
           {/* Logs */}
-          <div style={{ background: '#111', border: '1px solid #333', padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-            <h2 style={{ color: '#00f2ff', margin: '0 0 10px 0', fontSize: '18px' }}>SYSTEM LOGS</h2>
-            <div style={{ background: '#000', border: '1px solid #222', padding: '10px', flexGrow: 1, overflowY: 'auto', maxHeight: '300px', fontSize: '12px', color: '#888' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-brutal)', padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <h2 style={{ color: 'var(--accent-cyan)', margin: '0 0 10px 0', fontSize: '18px' }}>SYSTEM LOGS</h2>
+            <div style={{ background: 'var(--bg-input)', border: '1px solid var(--border-brutal)', padding: '10px', flexGrow: 1, overflowY: 'auto', maxHeight: '300px', fontSize: '12px', color: 'var(--text-muted)' }}>
               {logs.length === 0 && <div>No activity...</div>}
               {logs.map((log, i) => (
-                <div key={i} style={{ marginBottom: '5px', color: log.type === 'error' ? '#ff0055' : log.type === 'success' ? '#00ff88' : '#aaa' }}>
-                  <span style={{ color: '#555' }}>[{log.time}]</span> {log.msg}
+                <div key={i} style={{ marginBottom: '5px', color: log.type === 'error' ? 'var(--accent-red)' : log.type === 'success' ? 'var(--accent-lime)' : 'var(--text-secondary)' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>[{log.time}]</span> {log.msg}
                 </div>
               ))}
             </div>

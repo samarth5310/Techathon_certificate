@@ -438,7 +438,7 @@ const GenerateCertificate = () => {
                 </p>
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
                 <div style={{ border: '2px solid var(--accent-red)', padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
                   <span className="status-dot status-dot-green"></span>
                   <span className="mono" style={{ fontSize: '11px', letterSpacing: '0.2em', color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>
@@ -446,7 +446,7 @@ const GenerateCertificate = () => {
                   </span>
                 </div>
                 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   <button 
                     onClick={() => {
                       document.getElementById('verify-input')?.focus()

@@ -8,7 +8,7 @@
   font-style: normal;
 }
 
-:root {
+:root, [data-theme='dark'] {
   --bg-dark: #0a0a0a;
   --bg-card: #111111;
   --bg-card-inner: #0e0e0e;
@@ -23,6 +23,27 @@
   --text-primary: #f0f0f0;
   --text-secondary: #999999;
   --text-muted: #555555;
+  --grid-color: rgba(255, 62, 62, 0.025);
+  --btn-text: #000000;
+}
+
+[data-theme='light'] {
+  --bg-dark: #fdf5e6;
+  --bg-card: #ffffff;
+  --bg-card-inner: #f4f4f4;
+  --bg-input: #ffffff;
+  --border-brutal: #000000;
+  --border-accent: #000000;
+  --accent-red: #ff2a2a;
+  --accent-cyan: #00b396;
+  --accent-yellow: #ffcc00;
+  --accent-magenta: #d900d9;
+  --accent-lime: #82b300;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --grid-color: rgba(0, 0, 0, 0.04);
+  --btn-text: #000000;
 }
 
 * {
@@ -46,13 +67,13 @@ body {
     repeating-linear-gradient(0deg,
       transparent,
       transparent 60px,
-      rgba(255, 62, 62, 0.025) 60px,
-      rgba(255, 62, 62, 0.025) 61px),
+      var(--grid-color) 60px,
+      var(--grid-color) 61px),
     repeating-linear-gradient(90deg,
       transparent,
       transparent 60px,
-      rgba(255, 62, 62, 0.025) 60px,
-      rgba(255, 62, 62, 0.025) 61px);
+      var(--grid-color) 60px,
+      var(--grid-color) 61px);
 }
 
 #root {
@@ -114,7 +135,7 @@ button {
   justify-content: center;
   gap: 8px;
   background: var(--accent-red);
-  color: #000;
+  color: var(--btn-text);
   font-family: 'Space Mono', monospace;
   font-weight: 700;
   font-size: 13px;
@@ -184,6 +205,13 @@ button {
 .brutal-input::placeholder {
   color: var(--text-muted);
   font-family: 'JetBrains Mono', monospace;
+}
+
+select.brutal-input option {
+  background-color: var(--bg-card);
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
 }
 
 /* ═══════════════════════════════════════════
