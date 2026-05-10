@@ -166,14 +166,7 @@ const GenerateCertificate = () => {
       return
     }
 
-    // Check 2-hour download cooldown
-    const dlKey = `cert_dl_${formData.email.trim().toLowerCase()}_${formData.eventName.trim()}`
-    const lastDl = localStorage.getItem(dlKey)
-    if (lastDl && Date.now() - parseInt(lastDl, 10) < TWO_HOUR_MS) {
-      const remaining = new Date(parseInt(lastDl, 10) + TWO_HOUR_MS)
-      setError(`// COOLDOWN: Next download available after ${remaining.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}`)
-      return
-    }
+
 
     setDownloading(true)
     setError('')
@@ -224,8 +217,7 @@ const GenerateCertificate = () => {
         prev ? { ...prev, certificateGenerated: true, certificateId: certId } : prev
       )
 
-      // Save download timestamp for 2-hour cooldown
-      localStorage.setItem(dlKey, Date.now().toString())
+
 
       setNotice('>> Certificate downloaded successfully.')
       setNoticeType('success')
