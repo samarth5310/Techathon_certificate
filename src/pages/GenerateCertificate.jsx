@@ -194,6 +194,8 @@ const GenerateCertificate = () => {
         allowTaint: true,
         backgroundColor: '#fff9f9',
         logging: false,
+        windowWidth: 1123,
+        windowHeight: 794,
       })
 
       if (!canvas) throw new Error('Canvas generation failed')
@@ -262,6 +264,8 @@ const GenerateCertificate = () => {
         allowTaint: true,
         backgroundColor: '#fff9f9',
         logging: false,
+        windowWidth: 1123,
+        windowHeight: 794,
       })
 
       if (!canvas) throw new Error('Canvas generation failed')
