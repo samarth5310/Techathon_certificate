@@ -7,7 +7,7 @@ export const generateCertificateId = () => {
 
 export const generateQRCodeDataUrl = async (certificateId, domain = 'https://techathon-certificates.onrender.com') => {
   try {
-    const verificationUrl = `${domain}/verify`
+    const verificationUrl = `${domain}/verify/${certificateId}`
     const dataUrl = await QRCode.toDataURL(verificationUrl, {
       width: 200,
       margin: 2,
