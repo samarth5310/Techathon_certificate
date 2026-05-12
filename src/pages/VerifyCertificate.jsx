@@ -7,11 +7,39 @@ const VerifyCertificate = () => {
   const navigate = useNavigate()
   const { certificateId } = useParams()
   const [certificate, setCertificate] = useState(null)
+  const [teamMembers, setTeamMembers] = useState([])
+  const [loadingMembers, setLoadingMembers] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchId, setSearchId] = useState(certificateId || '')
 
   useEffect(() => {
+    const fetchTeamMembers = async (teamName, eventName, currentEmail) => {
+      if (!teamName) return
+      setLoadingMembers(true)
+      try {
+        const participantsRef = collection(db, 'participants')
+        const q = query(
+          participantsRef,
+          where('teamName', '==', teamName),
+          where('eventName', '==', eventName)
+        )
+        const snapshot = await getDocs(q)
+        const members = []
+        snapshot.forEach((doc) => {
+          const data = doc.data()
+          if (data.email !== currentEmail) {
+            members.push({ id: doc.id, ...data })
+          }
+        })
+        setTeamMembers(members)
+      } catch (err) {
+        console.error('Error fetching team members:', err)
+      } finally {
+        setLoadingMembers(false)
+      }
+    }
+
     const fetchCertificate = async () => {
       const idToSearch = (certificateId || '').trim()
       if (!idToSearch) {
@@ -43,10 +71,16 @@ const VerifyCertificate = () => {
         if (snapshot.empty) {
           setError(`Certificate [${idToSearch}] not found in database`)
           setCertificate(null)
+          setTeamMembers([])
         } else {
           const docData = snapshot.docs[0]
-          setCertificate({ id: docData.id, ...docData.data() })
+          const certData = { id: docData.id, ...docData.data() }
+          setCertificate(certData)
           setError('')
+          
+          if (certData.teamName && certData.eventName) {
+            fetchTeamMembers(certData.teamName, certData.eventName, certData.email)
+          }
         }
       } catch (fetchError) {
         console.error('Error fetching certificate:', fetchError)
@@ -272,6 +306,29 @@ const VerifyCertificate = () => {
                 </div>
               </div>
             ) : null}
+
+            {/* ═══ TEAM MEMBERS ═══ */}
+            {certificate && certificate.teamName && teamMembers.length > 0 && (
+              <div className="brutal-card" style={{ marginTop: '24px', padding: '24px', borderColor: 'var(--accent-yellow)' }}>
+                <h3 className="brutal-heading" style={{ fontSize: '18px', color: 'var(--accent-yellow)', marginBottom: '16px' }}>
+                  TEAM: {certificate.teamName}
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {teamMembers.map((member) => (
+                    <div key={member.id} className="data-cell" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div>
+                        <p className="brutal-label" style={{ fontSize: '12px' }}>{member.role ? member.role.toUpperCase() : 'MEMBER'}</p>
+                        <p className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>{member.name}</p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p className="brutal-label" style={{ fontSize: '10px' }}>PROBLEM STATEMENT / EMAIL</p>
+                        <p className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{member.problemStatement || member.email}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ═══ FOOTER ═══ */}
