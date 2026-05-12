@@ -504,25 +504,11 @@ const AdminPanel = () => {
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button
-                onClick={() => downloadPreview(1)}
-                disabled={downloadingPreview}
-                className="brutal-btn brutal-btn-cyan"
-              >
-                {downloadingPreview ? '[ DOWNLOADING... ]' : 'DOWNLOAD TEMPLATE 1 ↓'}
-              </button>
-              <button
                 onClick={() => downloadPreview(2)}
                 disabled={downloadingPreview}
                 className="brutal-btn brutal-btn-yellow"
               >
                 {downloadingPreview ? '[ DOWNLOADING... ]' : 'DOWNLOAD TEMPLATE 2 ↓'}
-              </button>
-              <button
-                onClick={() => downloadPreview(3)}
-                disabled={downloadingPreview}
-                className="brutal-btn brutal-btn-magenta"
-              >
-                {downloadingPreview ? '[ DOWNLOADING... ]' : 'DOWNLOAD TEMPLATE 3 ↓'}
               </button>
             </div>
           </div>

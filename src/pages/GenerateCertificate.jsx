@@ -192,7 +192,7 @@ const GenerateCertificate = () => {
         scale: 2.5,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#fff9f9',
+        backgroundColor: '#4a3abf',
         logging: false,
         windowWidth: 1123,
         windowHeight: 794,
@@ -262,7 +262,7 @@ const GenerateCertificate = () => {
         scale: 2.5,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#fff9f9',
+        backgroundColor: '#4a3abf',
         logging: false,
         windowWidth: 1123,
         windowHeight: 794,
@@ -349,7 +349,7 @@ const GenerateCertificate = () => {
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#fff9f9',
+        backgroundColor: '#4a3abf',
         logging: false,
       })
 

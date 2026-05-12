@@ -1,5 +1,6 @@
 import Template1 from './Template1'
 import Template2 from './Template2'
+import Template3 from './Template3'
 
 const isTechathon = (name) => {
   if (!name) return true
@@ -34,7 +35,7 @@ const CertificatePreview = ({
           maxWidth: '1123px',
           margin: '0 auto',
           overflow: 'hidden',
-          backgroundColor: useTechathonTemplate ? '#fff9f9' : '#fdf8f0',
+          backgroundColor: useTechathonTemplate ? '#4338CA' : '#fdf8f0',
         }}
       >
         <div style={{
@@ -45,7 +46,7 @@ const CertificatePreview = ({
         }}>
           {showPreview ? (
             useTechathonTemplate ? (
-              <Template1
+              <Template2
                 participantName={participantName}
                 eventName={eventName}
                 certificateDate={certificateDate}

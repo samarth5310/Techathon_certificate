@@ -55,41 +55,34 @@ app.post('/api/send-certificate-email', async (req, res) => {
           email: senderEmail,
         },
         to: [{ email: participantEmail }],
-        subject: `${eventName || 'Techathon 1.0'} Certificate - ${participantName}`,
+        subject: '🎓 Your Techathon 1.0 Participation Certificate | BGMIT Mudhol',
         htmlContent: `
-          <div style="background-color: #050505; padding: 40px 20px; font-family: 'Helvetica', 'Arial', sans-serif; color: #ffffff; text-align: center;">
-            <div style="max-width: 600px; margin: 0 auto; border: 4px solid #fffb00; padding: 40px; background-color: #000000; box-shadow: 12px 12px 0px #ff0055;">
+          <div style="background-color: #FAF9F6; padding: 40px 20px; font-family: 'Helvetica', 'Arial', sans-serif; color: #1F2937; line-height: 1.6;">
+            <div style="max-width: 600px; margin: 0 auto; border-top: 6px solid #3730A3; border-bottom: 6px solid #D4AF37; padding: 40px; background-color: #FFFDF7; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
               
-              <!-- Header -->
-              <h1 style="color: #fffb00; font-size: 36px; text-transform: uppercase; margin: 0 0 20px 0; letter-spacing: 4px; border-bottom: 2px solid #00f2ff; padding-bottom: 10px;">
-                CONGRATULATIONS
-              </h1>
+              <h2 style="color: #3730A3; margin-top: 0; margin-bottom: 25px; font-size: 22px;">🎓 Techathon 1.0 - Certificate of Participation</h2>
               
-              <p style="font-size: 18px; line-height: 1.6; color: #e0e0e0; margin-bottom: 30px;">
-                Hello <strong style="color: #00f2ff;">${participantName}</strong>,<br />
-                You have successfully conquered <strong>${eventName || 'TECHATHON 1.0'}</strong>.
+              <p>Dear <strong>${participantName}</strong>,</p>
+              
+              <p>Greetings from the Department of CSE & AIML, BGMIT Mudhol.</p>
+              
+              <p>Congratulations on successfully participating in <strong>Techathon 1.0 – 24 Hour Hackathon</strong> conducted at Biluru Gurubasava Mahaswamiji Institute of Technology, Mudhol. Your enthusiasm, creativity, teamwork, and innovative thinking throughout the event were truly appreciated.</p>
+              
+              <p>We are pleased to share your official digital Certificate of Participation with this email. The certificate is attached as a PDF for your records and future reference.</p>
+              
+              <div style="background-color: #F3F4F6; border-left: 4px solid #D4AF37; padding: 15px; margin: 25px 0;">
+                <p style="margin: 0;"><strong>Certificate ID:</strong> <span style="color: #3730A3; font-family: monospace; font-size: 16px;">${certificateId}</span></p>
+              </div>
+              
+              <p>Thank you for being a part of Techathon 1.0 and contributing to the spirit of innovation and technology. We look forward to seeing your participation in many more future events and achievements.</p>
+              
+              <p style="margin-bottom: 5px;">Best Regards,</p>
+              <p style="margin-top: 0; color: #4B5563;">
+                <strong style="color: #1F2937;">BGMIT Innovation Council</strong><br/>
+                Department of CSE & AIML<br/>
+                Biluru Gurubasava Mahaswamiji Institute of Technology, Mudhol<br/>
+                B.V.V Sangha’s BGMIT, Mudhol
               </p>
-              
-              <!-- Main Message -->
-              <div style="background-color: #111; border: 1px solid #333; padding: 25px; margin-bottom: 30px;">
-                <p style="margin: 0; font-size: 16px; color: #888; text-transform: uppercase; letter-spacing: 2px;">Your Achievement is Attached</p>
-                <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">// Official Digital Certificate PDF Included</p>
-              </div>
-
-              <!-- Certificate ID Box -->
-              <div style="border: 2px dashed #ff0055; padding: 15px; display: inline-block; margin-bottom: 30px;">
-                <span style="color: #888; font-size: 12px; display: block; margin-bottom: 5px;">CERTIFICATE_ID</span>
-                <span style="color: #ff0055; font-size: 20px; font-weight: bold; letter-spacing: 1px;">${certificateId}</span>
-              </div>
-
-              <!-- Footer -->
-              <div style="margin-top: 20px; border-top: 1px solid #222; padding-top: 20px;">
-                <p style="font-size: 12px; color: #444; margin: 0;">
-                  BGMIT INNOVATION COUNCIL © 2026<br />
-                  DEPARTMENT OF CSE & AIML
-                </p>
-              </div>
-
             </div>
           </div>
         `,
