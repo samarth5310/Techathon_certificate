@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { db, auth } from '../firebase/config'
 import { generateCertificateId } from '../utils/certificateUtils'
 import { buildVectorPdf } from '../utils/vectorPdf'
-import logoImage from '../../code/logo.png'
+import logoImage from '../../code/logo.svg'
 import swamiImage from '../../code/swami.png'
 import Papa from 'papaparse'
 

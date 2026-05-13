@@ -12,10 +12,13 @@ function loadImage(src) {
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
+      const isSvg = src.includes('.svg') || src.startsWith('data:image/svg+xml');
+      const scale = isSvg ? 8 : 1;
       const canvas = document.createElement('canvas')
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
+      canvas.width = img.naturalWidth * scale
+      canvas.height = img.naturalHeight * scale
       const ctx = canvas.getContext('2d')
+      if (isSvg) ctx.scale(scale, scale);
       ctx.drawImage(img, 0, 0)
       resolve(canvas.toDataURL('image/png', 1.0))
     }
@@ -136,7 +139,7 @@ export async function buildVectorPdf({
   // ═══ 7. CERTIFICATE TITLE ═══
   const titleY = divY + 14
   pdf.setFont('times', 'bold')
-  pdf.setFontSize(22)
+  pdf.setFontSize(18) // Reduced slightly to help it look centered
   pdf.setTextColor(...NAVY)
   pdf.text('CERTIFICATE OF PARTICIPATION', centerX, titleY, { align: 'center', charSpace: 2.5 })
 
@@ -183,7 +186,7 @@ export async function buildVectorPdf({
   const w2 = pdf.getTextWidth(p2)
 
   pdf.setFont('times', 'normal')
-  const p3 = ','
+  const p3 = ', conducted from April 30th to May 1st, 2026. The'
   const w3 = pdf.getTextWidth(p3)
 
   const totalW1 = w1 + w2 + w3
@@ -199,15 +202,11 @@ export async function buildVectorPdf({
 
   // Line 2
   const bodyY2 = bodyY1 + lineHeight
-  pdf.text('conducted from April 30th to May 1st, 2026. The event was organized by BGMIT, Mudhol.', centerX, bodyY2, { align: 'center' })
+  pdf.text('event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm,', centerX, bodyY2, { align: 'center' })
 
   // Line 3
   const bodyY3 = bodyY2 + lineHeight
-  pdf.text('Throughout the competition, the participant demonstrated exceptional enthusiasm,', centerX, bodyY3, { align: 'center' })
-
-  // Line 4
-  const bodyY4 = bodyY3 + lineHeight
-  pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY4, { align: 'center' })
+  pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
 
   // ═══ 11. SIGNATURE LINES (Increased font size, brought up) ═══
   const sigBottomMargin = 22 // Brought up further from bottom

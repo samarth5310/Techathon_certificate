@@ -6,7 +6,7 @@ import { db, auth } from '../firebase/config'
 import CertificatePreview from '../components/CertificatePreview'
 import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '../utils/certificateUtils'
 import { buildVectorPdf } from '../utils/vectorPdf'
-import logoImage from '../../code/logo.png'
+import logoImage from '../../code/logo.svg'
 import swamiImage from '../../code/swami.png'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
