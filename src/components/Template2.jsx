@@ -1,5 +1,5 @@
 import React from 'react';
-import logoImage from '../../code/logo.svg';
+import logoImage from '../../code/logo.png';
 import swamiImage from '../../code/swami.png';
 
 const Template2 = ({ participantName, eventName, certificateDate, certificateId, qrCodeUrl, department }) => {

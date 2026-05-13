@@ -1,5 +1,5 @@
 import React from 'react';
-import logoImage from '../../code/logo.svg';
+import logoImage from '../../code/logo.png';
 import swamiImage from '../../code/swami.png';
 import techathonFontImage from '../../code/FONT.png';
 import sanghaLogo from '../../assets/Sangha-Logo-237x300.jpg';

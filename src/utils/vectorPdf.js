@@ -88,42 +88,99 @@ export async function buildVectorPdf({
   if (logoData) {
     pdf.saveGraphicsState()
     pdf.setGState(new pdf.GState({ opacity: 0.05 }))
-    const wmSize = 75
-    pdf.addImage(logoData, 'PNG', centerX - wmSize / 2, PAGE_H / 2 - wmSize / 2, wmSize, wmSize)
+    const wmH = 100
+    const wmW = 68 // Matches 0.68 ratio roughly (100 * 0.68 = 68)
+    pdf.addImage(logoData, 'PNG', centerX - wmW / 2, PAGE_H / 2 - wmH / 2, wmW, wmH)
     pdf.restoreGraphicsState()
   }
 
+  // ═══ 4b. GEOMETRIC CORNER ACCENTS ═══
+  const cornerLen = 18  // Length of each L-arm
+  const cornerInset = 4 // Inset from white area edge
+  pdf.setDrawColor(...GOLD)
+  pdf.setLineWidth(0.8)
+
+  // Top-left corner
+  const cTLx = whiteX + cornerInset
+  const cTLy = whiteY + cornerInset
+  pdf.line(cTLx, cTLy, cTLx + cornerLen, cTLy)
+  pdf.line(cTLx, cTLy, cTLx, cTLy + cornerLen)
+
+  // Top-right corner
+  const cTRx = whiteX + whiteW - cornerInset
+  const cTRy = whiteY + cornerInset
+  pdf.line(cTRx, cTRy, cTRx - cornerLen, cTRy)
+  pdf.line(cTRx, cTRy, cTRx, cTRy + cornerLen)
+
+  // Bottom-left corner
+  const cBLx = whiteX + cornerInset
+  const cBLy = whiteY + whiteH - cornerInset
+  pdf.line(cBLx, cBLy, cBLx + cornerLen, cBLy)
+  pdf.line(cBLx, cBLy, cBLx, cBLy - cornerLen)
+
+  // Bottom-right corner
+  const cBRx = whiteX + whiteW - cornerInset
+  const cBRy = whiteY + whiteH - cornerInset
+  pdf.line(cBRx, cBRy, cBRx - cornerLen, cBRy)
+  pdf.line(cBRx, cBRy, cBRx, cBRy - cornerLen)
+
+  // Small diamond ornaments at each corner
+  const dSize = 1.5
+  pdf.setFillColor(...GOLD)
+  ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
+    pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
+    pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
+  })
+
   // ═══ 5. HEADER: Logos + College Name ═══
-  const logoW = 18.5
-  const logoH = 22.5
+  const logoH = 22   // Same height for both logos
+  const leftLogoW = logoH * (214 / 278) // logo.png aspect ratio (214x278)
+  const rightLogoW = logoH * (195 / 226) // swami.png aspect ratio (195x226)
   const logoY = whiteY + contentPadV
 
-  // Left logo (BVV)
+  // Left logo (BVV) - aligned to left content edge
   if (logoData) {
-    pdf.addImage(logoData, 'PNG', contentL, logoY, logoW, logoH)
+    pdf.addImage(logoData, 'PNG', contentL, logoY, leftLogoW, logoH)
   }
-  // Right logo (Swami)
+  // Right logo (Swami) - aligned to right content edge
   if (swamiData) {
-    pdf.addImage(swamiData, 'PNG', contentR - logoW, logoY, logoW, logoH)
+    pdf.addImage(swamiData, 'PNG', contentR - rightLogoW, logoY, rightLogoW, logoH)
   }
 
-  // "B.V.V SANGHA'S" - Perfectly centered
+  // "B.V.V SANGHA'S" - Embossed effect (light shadow offset + main text)
   pdf.setFont('times', 'bold')
   pdf.setFontSize(13)
-  pdf.setTextColor(...NAVY)
   const bvvY = logoY + 6
-  pdf.text("B.V.V SANGHA'S", centerX, bvvY, { align: 'center', charSpace: 1.5 })
+  const embossOff = 0.4 // Shadow offset in mm
 
-  // College name - Split into two lines as requested, perfectly centered
+  // Shadow layer (lighter color, offset down-right)
+  pdf.setTextColor(180, 190, 220)
+  pdf.text("B.V.V SANGHA'S", centerX + embossOff, bvvY + embossOff, { align: 'center' })
+  // Main text layer
+  pdf.setTextColor(...NAVY)
+  pdf.text("B.V.V SANGHA'S", centerX, bvvY, { align: 'center' })
+
+  // College name - Embossed effect on both lines
   pdf.setFontSize(16)
   const collegeY1 = bvvY + 6.5
-  pdf.text('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF TECHNOLOGY,', centerX, collegeY1, { align: 'center' })
+  // Shadow
+  pdf.setTextColor(180, 190, 220)
+  pdf.text('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF', centerX + embossOff, collegeY1 + embossOff, { align: 'center' })
+  // Main
+  pdf.setTextColor(...NAVY)
+  pdf.text('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF', centerX, collegeY1, { align: 'center' })
+
   const collegeY2 = collegeY1 + 6.5
-  pdf.text('MUDHOL', centerX, collegeY2, { align: 'center' })
+  // Shadow
+  pdf.setTextColor(180, 190, 220)
+  pdf.text('TECHNOLOGY, MUDHOL', centerX + embossOff, collegeY2 + embossOff, { align: 'center' })
+  // Main
+  pdf.setTextColor(...NAVY)
+  pdf.text('TECHNOLOGY, MUDHOL', centerX, collegeY2, { align: 'center' })
 
   // ═══ 6. GOLD DIVIDER WITH DOTS ═══
   const divY = collegeY2 + 5
-  const collegeMaxW = pdf.getTextWidth('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF TECHNOLOGY,')
+  const collegeMaxW = pdf.getTextWidth('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF')
   const divW = collegeMaxW * 0.95
   const divL = centerX - divW / 2
   const divR = centerX + divW / 2
@@ -136,19 +193,52 @@ export async function buildVectorPdf({
   pdf.setLineWidth(0.5)
   pdf.line(divL + dotR + 1, divY, divR - dotR - 1, divY)
 
-  // ═══ 7. CERTIFICATE TITLE ═══
+  // ═══ 7. CERTIFICATE TITLE (with blue ribbon/banner) ═══
   const titleY = divY + 14
   pdf.setFont('times', 'bold')
-  pdf.setFontSize(18) // Reduced slightly to help it look centered
-  pdf.setTextColor(...NAVY)
-  pdf.text('CERTIFICATE OF PARTICIPATION', centerX, titleY, { align: 'center', charSpace: 2.5 })
+  pdf.setFontSize(18)
+
+  // Measure the title text width for the banner
+  const titleText = 'C E R T I F I C A T E   O F   P A R T I C I P A T I O N'
+  const titleTextW = pdf.getTextWidth(titleText)
+  const bannerPadH = 16 // Horizontal padding on each side
+  const bannerH = 11    // Banner height
+  const bannerW = titleTextW + bannerPadH * 2
+  const bannerX = centerX - bannerW / 2
+  const bannerY = titleY - bannerH + 2.5 // Vertically center text inside banner
+
+  // Draw the blue ribbon/banner
+  pdf.setFillColor(...NAVY)
+  pdf.rect(bannerX, bannerY, bannerW, bannerH, 'F')
+
+  // Small decorative ribbon tails (angled ends)
+  const tailW = 5
+  const tailH = bannerH
+  // Left tail
+  pdf.triangle(
+    bannerX, bannerY,
+    bannerX - tailW, bannerY + tailH / 2,
+    bannerX, bannerY + tailH,
+    'F'
+  )
+  // Right tail
+  pdf.triangle(
+    bannerX + bannerW, bannerY,
+    bannerX + bannerW + tailW, bannerY + tailH / 2,
+    bannerX + bannerW, bannerY + tailH,
+    'F'
+  )
+
+  // Draw white text centered inside the banner
+  pdf.setTextColor(255, 255, 255)
+  pdf.text(titleText, centerX, titleY, { align: 'center' })
 
   // ═══ 8. CENTRAL CONTENT AREA ═══
   const certifyY = titleY + 16
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)
   pdf.setTextColor(...GREY)
-  pdf.text('THIS IS TO CERTIFY THAT', centerX, certifyY, { align: 'center', charSpace: 0.4 })
+  pdf.text('THIS IS TO CERTIFY THAT', centerX, certifyY, { align: 'center' })
 
   // ═══ 9. PARTICIPANT NAME ═══
   const nameLen = participantName.length
@@ -208,8 +298,8 @@ export async function buildVectorPdf({
   const bodyY3 = bodyY2 + lineHeight
   pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
 
-  // ═══ 11. SIGNATURE LINES (Increased font size, brought up) ═══
-  const sigBottomMargin = 22 // Brought up further from bottom
+  // ═══ 11. SIGNATURE LINES ═══
+  const sigBottomMargin = 35 // More room from bottom for QR + cert ID below
   const sigY = whiteY + whiteH - sigBottomMargin
 
   const sigNames = [
@@ -219,36 +309,39 @@ export async function buildVectorPdf({
     { name: 'Dr. Principal Name', role: 'Principal, BGMIT' },
   ]
 
-  const sigSpacing = contentW / 4
-  const sigLineW = sigSpacing * 0.75
+  const sigCount = sigNames.length
+  const sigTotalW = contentW + 10 // Wider spread for more horizontal spacing
+  const sigStartX = centerX - sigTotalW / 2
+  const sigSpacing = sigTotalW / sigCount
+  const sigLineW = sigSpacing * 0.85 // Longer signature lines (was 0.75)
 
   pdf.setDrawColor(...GREY)
   pdf.setLineWidth(0.4)
 
   sigNames.forEach((sig, i) => {
-    const sx = contentL + sigSpacing * (i + 0.5)
+    const sx = sigStartX + sigSpacing * (i + 0.5)
     const lineY = sigY
     
     pdf.line(sx - sigLineW / 2, lineY, sx + sigLineW / 2, lineY)
     
-    // Increased faculty name size
+    // Faculty name (bold, larger)
     pdf.setFont('times', 'bold')
-    pdf.setFontSize(10)
+    pdf.setFontSize(11)
     pdf.setTextColor(...NAVY)
-    pdf.text(sig.name, sx, lineY + 4.5, { align: 'center' })
+    pdf.text(sig.name, sx, lineY + 5, { align: 'center' })
     
-    // Increased role size
-    pdf.setFont('times', 'normal')
-    pdf.setFontSize(8)
+    // Designation/role (smaller than name)
+    pdf.setFont('times', 'italic')
+    pdf.setFontSize(7.5)
     pdf.setTextColor(...SIG_GREY)
-    pdf.text(sig.role, sx, lineY + 8.5, { align: 'center' })
+    pdf.text(sig.role, sx, lineY + 9, { align: 'center' })
   })
 
   // ═══ 12. DATE & PLACE ═══
-  const datePlaceY = sigY - 14 // Relative to signatures
+  const datePlaceY = bodyY3 + (sigY - bodyY3) / 2 // Centered between body content and signature lines
 
   pdf.setFont('times', 'bold')
-  pdf.setFontSize(11)
+  pdf.setFontSize(12)
   pdf.setTextColor(...GREY)
   pdf.text('Date:', contentL, datePlaceY)
   pdf.setFont('times', 'normal')
@@ -260,11 +353,11 @@ export async function buildVectorPdf({
   const placeTextX = contentR - pdf.getTextWidth(' Mudhol')
   pdf.text(' Mudhol', placeTextX, datePlaceY)
 
-  // ═══ 13. QR CODE (bottom-left) ═══
+  // ═══ 13. QR CODE (bottom-left, below signatures) ═══
   if (qrCodeUrl) {
     const qrSize = 14
-    const qrX = whiteX + 4
-    const qrY = whiteY + whiteH - 4 - qrSize
+    const qrX = contentL
+    const qrY = sigY + 14 // Below signature role text
     pdf.addImage(qrCodeUrl, 'PNG', qrX, qrY, qrSize, qrSize)
     
     pdf.setDrawColor(204, 204, 204)
@@ -272,9 +365,9 @@ export async function buildVectorPdf({
     pdf.rect(qrX, qrY, qrSize, qrSize, 'S')
   }
 
-  // ═══ 14. CERTIFICATE ID (bottom-right) ═══
-  const certIdX = whiteX + whiteW - contentPadH
-  const certIdY = whiteY + whiteH - 4
+  // ═══ 14. CERTIFICATE ID (bottom-right, below signatures) ═══
+  const certIdX = contentR
+  const certIdY = sigY + 22 // Aligned with bottom of QR code area
 
   pdf.setFont('courier', 'normal')
   pdf.setFontSize(8)

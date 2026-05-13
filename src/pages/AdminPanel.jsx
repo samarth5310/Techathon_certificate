@@ -5,9 +5,9 @@ import { collection, getDocs, writeBatch, doc, addDoc, deleteDoc, serverTimestam
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { db, auth } from '../firebase/config'
-import { generateCertificateId } from '../utils/certificateUtils'
+import { generateCertificateId, generateQRCodeDataUrl } from '../utils/certificateUtils'
 import { buildVectorPdf } from '../utils/vectorPdf'
-import logoImage from '../../code/logo.svg'
+import logoImage from '../../code/logo.png'
 import swamiImage from '../../code/swami.png'
 import Papa from 'papaparse'
 
@@ -63,10 +63,13 @@ const AdminPanel = () => {
     setDownloadingPreview(true)
     setMessage('')
     try {
+      // Generate a dummy QR code for preview
+      const dummyQr = await generateQRCodeDataUrl('https://bgmitmudhol.edu.in/')
+
       const pdf = await buildVectorPdf({
         participantName: 'Admin Preview',
         certificateId: 'PREVIEW-XXXX-XXXX',
-        qrCodeUrl: null,
+        qrCodeUrl: dummyQr,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
       })
