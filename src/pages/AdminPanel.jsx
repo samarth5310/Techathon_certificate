@@ -1,6 +1,4 @@
 import { useEffect, useState, useRef } from 'react'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import CertificatePreview from '../components/CertificatePreview'
 import Template3 from '../components/Template3'
 import { collection, getDocs, writeBatch, doc, addDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
@@ -8,6 +6,9 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { db, auth } from '../firebase/config'
 import { generateCertificateId } from '../utils/certificateUtils'
+import { buildVectorPdf } from '../utils/vectorPdf'
+import logoImage from '../../code/logo.png'
+import swamiImage from '../../code/swami.png'
 import Papa from 'papaparse'
 
 const AdminPanel = () => {
@@ -62,26 +63,14 @@ const AdminPanel = () => {
     setDownloadingPreview(true)
     setMessage('')
     try {
-      const ref = templateNum === 1 ? template1Ref : templateNum === 2 ? template2Ref : template3Ref
-      const element = ref.current
-      if (!element) throw new Error('Preview element not found')
-
-      let bgColor = '#fff9f9'
-      if (templateNum === 2) bgColor = '#fdf8f0'
-      if (templateNum === 3) bgColor = '#0a0e27'
-
-      const canvas = await html2canvas(element, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: bgColor,
-        logging: false,
+      const pdf = await buildVectorPdf({
+        participantName: 'Admin Preview',
+        certificateId: 'PREVIEW-XXXX-XXXX',
+        qrCodeUrl: null,
+        logoSrc: logoImage,
+        swamiSrc: swamiImage,
       })
 
-      const imageData = canvas.toDataURL('image/png', 1.0)
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-      pdf.addImage(imageData, 'PNG', 0, 0, 297, 210, undefined, 'FAST')
-      
       pdf.save(`Template_${templateNum}_Preview.pdf`)
       setMessage(`>> Template ${templateNum} downloaded successfully`)
     } catch (error) {

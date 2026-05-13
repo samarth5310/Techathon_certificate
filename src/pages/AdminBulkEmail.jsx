@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from 'react'
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useNavigate, Link } from 'react-router-dom'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import { db, auth } from '../firebase/config'
 import CertificatePreview from '../components/CertificatePreview'
 import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '../utils/certificateUtils'
+import { buildVectorPdf } from '../utils/vectorPdf'
+import logoImage from '../../code/logo.png'
+import swamiImage from '../../code/swami.png'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
 
@@ -88,18 +89,15 @@ const AdminBulkEmail = () => {
         }
         
         const qrUrl = await generateQRCodeDataUrl(certId, parseQueryDomain())
-        const renderData = { ...p, certificateId: certId, qrCodeUrl: qrUrl }
         
-        // 2. Render to DOM
-        setCurrentRender(renderData)
-        await new Promise(r => setTimeout(r, 500)) // Wait for React to render and images to load
-        
-        // 3. Generate PDF
-        if (!certRef.current) throw new Error('Certificate DOM element missing')
-        const canvas = await html2canvas(certRef.current, { scale: 2.5, useCORS: true, allowTaint: true, backgroundColor: '#fff9f9', logging: false })
-        const imageData = canvas.toDataURL('image/png', 1.0)
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-        pdf.addImage(imageData, 'PNG', 0, 0, 297, 210, undefined, 'FAST')
+        // 2. Generate Vector PDF
+        const pdf = await buildVectorPdf({
+          participantName: p.name,
+          certificateId: certId,
+          qrCodeUrl: qrUrl,
+          logoSrc: logoImage,
+          swamiSrc: swamiImage,
+        })
         const base64Pdf = pdf.output('datauristring').split(',')[1]
         
         // 4. Send Email

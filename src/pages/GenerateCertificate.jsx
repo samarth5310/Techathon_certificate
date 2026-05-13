@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import { collection, doc, getDocs, getDoc, query, updateDoc, where, setDoc } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
 import CertificatePreview from '../components/CertificatePreview'
 import { db } from '../firebase/config'
 import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '../utils/certificateUtils'
+import { buildVectorPdf } from '../utils/vectorPdf'
+import logoImage from '../../code/logo.png'
+import swamiImage from '../../code/swami.png'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
 const ONE_DAY_MS = 24 * 60 * 60 * 1000 // Standard 24 hours
@@ -187,25 +189,14 @@ const GenerateCertificate = () => {
         await new Promise((resolve) => window.requestAnimationFrame(() => resolve()))
       }
 
-      const element = certificateRef.current
-      const canvas = await html2canvas(element, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#4a3abf',
-        logging: false,
-        windowWidth: 1123,
-        windowHeight: 794,
+      const pdf = await buildVectorPdf({
+        participantName: participant.name,
+        certificateId: certId,
+        qrCodeUrl: qrUrl,
+        logoSrc: logoImage,
+        swamiSrc: swamiImage,
       })
 
-      if (!canvas) throw new Error('Canvas generation failed')
-
-      const imageData = canvas.toDataURL('image/png', 1.0)
-      if (!imageData || imageData.length < 100) throw new Error('Invalid image data')
-
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-      pdf.addImage(imageData, 'PNG', 0, 0, 297, 210, undefined, 'FAST')
-      
       const fileName = `${participant.name.replace(/\s+/g, '_')}_${formData.eventName.replace(/\s+/g, '')}.pdf`
       pdf.save(fileName)
 
@@ -257,24 +248,14 @@ const GenerateCertificate = () => {
         await new Promise((resolve) => window.requestAnimationFrame(() => resolve()))
       }
 
-      const element = certificateRef.current
-      const canvas = await html2canvas(element, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#4a3abf',
-        logging: false,
-        windowWidth: 1123,
-        windowHeight: 794,
+      const pdf = await buildVectorPdf({
+        participantName: participant.name,
+        certificateId: certId,
+        qrCodeUrl: qrUrl,
+        logoSrc: logoImage,
+        swamiSrc: swamiImage,
       })
 
-      if (!canvas) throw new Error('Canvas generation failed')
-
-      const imageData = canvas.toDataURL('image/png', 1.0)
-      if (!imageData || imageData.length < 100) throw new Error('Invalid image data')
-
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-      pdf.addImage(imageData, 'PNG', 0, 0, 297, 210, undefined, 'FAST')
       const pdfBase64 = pdf.output('datauristring').split(',')[1]
 
       const response = await fetch(EMAIL_ENDPOINT, {
