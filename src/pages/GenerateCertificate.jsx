@@ -193,6 +193,8 @@ const GenerateCertificate = () => {
       const pdf = await buildVectorPdf({
         participantName: participant.name,
         certificateId: certId,
+        eventName: formData.eventName,
+        eventDate: certificateDate,
         qrCodeUrl: qrUrl,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
@@ -253,6 +255,8 @@ const GenerateCertificate = () => {
       const pdf = await buildVectorPdf({
         participantName: participant.name,
         certificateId: certId,
+        eventName: formData.eventName,
+        eventDate: certificateDate,
         qrCodeUrl: qrUrl,
         logoSrc: logoImage,
         swamiSrc: swamiImage,

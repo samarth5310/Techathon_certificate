@@ -121,8 +121,8 @@ const VerifyCertificate = () => {
       {/* ═══ TICKER ═══ */}
       <div className="brutal-ticker">
         <div className="brutal-ticker-inner">
-          {'CERTIFICATE VERIFICATION ░░ TECHATHON 1.0 ░░ BGMIT MUDHOL ░░ AUTHENTICATE YOUR CERT ░░ '}
-          {'CERTIFICATE VERIFICATION ░░ TECHATHON 1.0 ░░ BGMIT MUDHOL ░░ AUTHENTICATE YOUR CERT ░░ '}
+          {`CERTIFICATE VERIFICATION ░░ ${certificate?.eventName || 'BGMIT'} ░░ AUTHENTICATE YOUR CERT ░░ `}
+          {`CERTIFICATE VERIFICATION ░░ ${certificate?.eventName || 'BGMIT'} ░░ AUTHENTICATE YOUR CERT ░░ `}
         </div>
       </div>
 
@@ -138,7 +138,7 @@ const VerifyCertificate = () => {
               </h1>
             </div>
             <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-              // Techathon1.0 — BGMIT Innovation Council
+              // {certificate?.eventName || 'BGMIT'} — Verification Portal
             </p>
           </div>
 
@@ -210,7 +210,9 @@ const VerifyCertificate = () => {
                     ✓
                   </div>
                   <h2 className="brutal-heading" style={{ fontSize: 'clamp(18px, 3vw, 26px)', color: '#00ff88' }}>
-                    CERTIFICATE VERIFIED
+                    {certificate.eventName?.toLowerCase().includes('techathon 1.0') 
+                      ? 'CERTIFICATE VERIFIED' 
+                      : 'VERIFIED AS PARTICIPANT'}
                   </h2>
                 </div>
 

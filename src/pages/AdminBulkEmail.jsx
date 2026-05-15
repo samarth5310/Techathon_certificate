@@ -21,6 +21,7 @@ const AdminBulkEmail = () => {
   const [sending, setSending] = useState(false)
   const [progress, setProgress] = useState({ current: 0, total: 0, success: 0, failed: 0 })
   const [logs, setLogs] = useState([])
+  const [collapsedEvents, setCollapsedEvents] = useState({})
 
   // Hidden certificate state for rendering
   const certRef = useRef(null)
@@ -95,6 +96,8 @@ const AdminBulkEmail = () => {
         const pdf = await buildVectorPdf({
           participantName: p.name,
           certificateId: certId,
+          eventName: p.eventName,
+          eventDate: p.eventDate ? (typeof p.eventDate.toDate === 'function' ? p.eventDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' }) : new Date(p.eventDate).toLocaleDateString('en-IN', { dateStyle: 'long' })) : 'N/A',
           qrCodeUrl: qrUrl,
           logoSrc: logoImage,
           swamiSrc: swamiImage,
@@ -171,38 +174,106 @@ const AdminBulkEmail = () => {
             </button>
           </div>
           
-          <div style={{ maxHeight: '600px', overflowY: 'auto', border: '1px solid var(--border-brutal)' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-              <thead style={{ background: 'var(--bg-card-inner)', textAlign: 'left', position: 'sticky', top: 0 }}>
-                <tr>
-                  <th style={{ padding: '10px', width: '40px' }}></th>
-                  <th style={{ padding: '10px' }}>NAME</th>
-                  <th style={{ padding: '10px' }}>EMAIL</th>
-                  <th style={{ padding: '10px' }}>EVENT</th>
-                  <th style={{ padding: '10px' }}>STATUS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {participants.map(p => (
-                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-brutal)', background: selectedIds.includes(p.id) ? 'var(--bg-input)' : 'transparent' }}>
-                    <td style={{ padding: '10px', textAlign: 'center' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={selectedIds.includes(p.id)} 
-                        onChange={() => toggleSelection(p.id)}
-                        disabled={sending}
-                      />
-                    </td>
-                    <td style={{ padding: '10px', color: 'var(--text-primary)' }}>{p.name}</td>
-                    <td style={{ padding: '10px', color: 'var(--text-muted)' }}>{p.email}</td>
-                    <td style={{ padding: '10px', color: 'var(--accent-cyan)' }}>{p.eventName}</td>
-                    <td style={{ padding: '10px', fontSize: '12px', color: p.certificateEmailSentAt ? 'var(--accent-lime)' : 'var(--accent-red)' }}>
-                      {p.certificateEmailSentAt ? 'SENT' : 'NOT SENT'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ maxHeight: '700px', overflowY: 'auto' }}>
+            {Object.entries(
+              participants.reduce((acc, p) => {
+                let event = p.eventName || 'Unassigned Event'
+                // Normalize Techathon variations
+                const upperEvent = event.toUpperCase()
+                if (upperEvent.includes('TECHATHON')) {
+                  event = 'TECHATHON 1.0'
+                }
+                
+                if (!acc[event]) acc[event] = []
+                acc[event].push(p)
+                return acc
+              }, {})
+            ).map(([eventName, eventParticipants]) => (
+              <div key={eventName} style={{ marginBottom: '30px', border: '1px solid var(--border-brutal)', background: 'var(--bg-card-inner)' }}>
+                <div 
+                  onClick={() => setCollapsedEvents(prev => ({ ...prev, [eventName]: !prev[eventName] }))}
+                  style={{ 
+                    padding: '12px 15px', 
+                    background: 'var(--bg-input)', 
+                    borderBottom: '2px solid var(--border-brutal)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    cursor: 'pointer'
+                  }}
+                  className="event-header-hover"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ 
+                      fontSize: '12px', 
+                      color: 'var(--accent-yellow)',
+                      transition: 'transform 0.2s',
+                      transform: collapsedEvents[eventName] ? 'rotate(-90deg)' : 'rotate(0deg)',
+                      display: 'inline-block'
+                    }}>
+                      ▼
+                    </span>
+                    <h3 style={{ margin: 0, color: 'var(--accent-yellow)', fontSize: '16px' }}>
+                      {eventName.toUpperCase()} ({eventParticipants.length})
+                    </h3>
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation() // Don't collapse when clicking button
+                      const eventIds = eventParticipants.map(p => p.id)
+                      const allSelected = eventIds.every(id => selectedIds.includes(id))
+                      if (allSelected) {
+                        setSelectedIds(prev => prev.filter(id => !eventIds.includes(id)))
+                      } else {
+                        setSelectedIds(prev => [...new Set([...prev, ...eventIds])])
+                      }
+                    }} 
+                    style={{ 
+                      background: 'transparent', 
+                      color: 'var(--accent-cyan)', 
+                      border: '1px solid var(--accent-cyan)', 
+                      padding: '2px 8px', 
+                      fontSize: '11px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {eventParticipants.every(p => selectedIds.includes(p.id)) ? 'DESELECT EVENT' : 'SELECT EVENT'}
+                  </button>
+                </div>
+                
+                {!collapsedEvents[eventName] && (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                    <thead style={{ background: 'rgba(0,0,0,0.2)', textAlign: 'left' }}>
+                      <tr>
+                        <th style={{ padding: '10px', width: '40px' }}></th>
+                        <th style={{ padding: '10px' }}>NAME</th>
+                        <th style={{ padding: '10px' }}>EMAIL</th>
+                        <th style={{ padding: '10px' }}>STATUS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {eventParticipants.map(p => (
+                        <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: selectedIds.includes(p.id) ? 'rgba(0,255,255,0.05)' : 'transparent' }}>
+                          <td style={{ padding: '10px', textAlign: 'center' }}>
+                            <input 
+                              type="checkbox" 
+                              checked={selectedIds.includes(p.id)} 
+                              onChange={() => toggleSelection(p.id)}
+                              disabled={sending}
+                            />
+                          </td>
+                          <td style={{ padding: '10px', color: 'var(--text-primary)' }}>{p.name}</td>
+                          <td style={{ padding: '10px', color: 'var(--text-muted)', fontSize: '12px' }}>{p.email}</td>
+                          <td style={{ padding: '10px', fontSize: '11px', color: p.certificateEmailSentAt ? 'var(--accent-lime)' : 'var(--accent-red)' }}>
+                            {p.certificateEmailSentAt ? 'SENT' : 'PENDING'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 

@@ -48,6 +48,8 @@ function loadImage(src) {
 export async function buildVectorPdf({
   participantName = 'Participant Name',
   certificateId = 'BGMIT-XXXX-XXXX',
+  eventName = 'TECHATHON 1.0',
+  eventDate = '01 May 2026',
   qrCodeUrl,
   logoSrc,
   swamiSrc,
@@ -277,23 +279,28 @@ export async function buildVectorPdf({
   pdf.setLineWidth(0.5)
   pdf.line(centerX - underlineW / 2, underlineY, centerX + underlineW / 2, underlineY)
 
-  // ═══ 10. BODY TEXT (Increased size, bolded event name, perfectly centered) ═══
+  // ═══ 10. BODY TEXT (Dynamic content) ═══
   pdf.setTextColor(...GREY)
   const bodyY1 = underlineY + 12
   const lineHeight = 7.5
 
-  // Line 1: Normal + Bold + Normal
   pdf.setFontSize(13)
   pdf.setFont('times', 'normal')
+
+  const isTechathon1 = eventName?.toLowerCase().includes('techathon 1.0')
+
+  // Line 1: Normal + Bold + Normal
   const p1 = 'has actively participated in the '
   const w1 = pdf.getTextWidth(p1)
 
+  const p2 = eventName || 'TECHATHON 1.0'
   pdf.setFont('times', 'bold')
-  const p2 = '24-Hour Hackathon TECHATHON 1.0'
   const w2 = pdf.getTextWidth(p2)
 
   pdf.setFont('times', 'normal')
-  const p3 = ', conducted from April 30th to May 1st, 2026. The'
+  const p3 = isTechathon1 
+    ? ', conducted from April 30th to May 1st, 2026. The' 
+    : `, on ${eventDate || 'Date'}. The`
   const w3 = pdf.getTextWidth(p3)
 
   const totalW1 = w1 + w2 + w3

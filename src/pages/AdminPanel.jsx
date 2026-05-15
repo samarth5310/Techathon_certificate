@@ -70,6 +70,8 @@ const AdminPanel = () => {
       const pdf = await buildVectorPdf({
         participantName: 'Admin Preview',
         certificateId: 'PREVIEW-XXXX-XXXX',
+        eventName: 'GENERAL EVENT',
+        eventDate: '01 Jan 2026',
         qrCodeUrl: dummyQr,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
