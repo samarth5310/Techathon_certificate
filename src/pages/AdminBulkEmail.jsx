@@ -8,6 +8,7 @@ import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '
 import { buildVectorPdf } from '../utils/vectorPdf'
 import logoImage from '../../code/logo.png'
 import swamiImage from '../../code/swami.png'
+import principalSignImage from '../../code/principal_sign.png'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
 
@@ -97,6 +98,7 @@ const AdminBulkEmail = () => {
           qrCodeUrl: qrUrl,
           logoSrc: logoImage,
           swamiSrc: swamiImage,
+          principalSignSrc: principalSignImage,
         })
         const base64Pdf = pdf.output('datauristring').split(',')[1]
         

@@ -14,13 +14,28 @@ function loadImage(src) {
     img.onload = () => {
       const isSvg = src.includes('.svg') || src.startsWith('data:image/svg+xml');
       const scale = isSvg ? 8 : 1;
+      
+      let w = img.naturalWidth * scale
+      let h = img.naturalHeight * scale
+      
+      // Cap dimensions to 800px to reduce file size while maintaining print quality
+      const MAX_DIM = 800
+      if (w > MAX_DIM || h > MAX_DIM) {
+        if (w > h) {
+          h = (MAX_DIM / w) * h
+          w = MAX_DIM
+        } else {
+          w = (MAX_DIM / h) * w
+          h = MAX_DIM
+        }
+      }
+
       const canvas = document.createElement('canvas')
-      canvas.width = img.naturalWidth * scale
-      canvas.height = img.naturalHeight * scale
+      canvas.width = w
+      canvas.height = h
       const ctx = canvas.getContext('2d')
-      if (isSvg) ctx.scale(scale, scale);
-      ctx.drawImage(img, 0, 0)
-      resolve(canvas.toDataURL('image/png', 1.0))
+      ctx.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/png'))
     }
     img.onerror = reject
     img.src = src
@@ -36,22 +51,24 @@ export async function buildVectorPdf({
   qrCodeUrl,
   logoSrc,
   swamiSrc,
+  principalSignSrc,
 }) {
-  const [logoData, swamiData] = await Promise.all([
+  const [logoData, swamiData, principalSignData] = await Promise.all([
     logoSrc ? loadImage(logoSrc) : Promise.resolve(null),
     swamiSrc ? loadImage(swamiSrc) : Promise.resolve(null),
+    principalSignSrc ? loadImage(principalSignSrc) : Promise.resolve(null),
   ])
 
-  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true })
 
   // ─── COLORS ───
   const INDIGO = [67, 56, 202]     // #4338CA
-  const GOLD   = [212, 175, 55]    // #D4AF37
-  const NAVY   = [30, 58, 138]     // #1E3A8A
-  const IVORY  = [250, 249, 246]   // #FAF9F6
-  const BLACK  = [0, 0, 0]
-  const GREY   = [51, 51, 51]      // #333
-  const LGREY  = [102, 102, 102]   // #666
+  const GOLD = [212, 175, 55]    // #D4AF37
+  const NAVY = [30, 58, 138]     // #1E3A8A
+  const IVORY = [250, 249, 246]   // #FAF9F6
+  const BLACK = [0, 0, 0]
+  const GREY = [51, 51, 51]      // #333
+  const LGREY = [102, 102, 102]   // #666
   const SIG_GREY = [85, 85, 85]    // #555
 
   // ─── LAYOUT METRICS ───
@@ -62,7 +79,7 @@ export async function buildVectorPdf({
   const whiteY = outerPad + goldBorderW + innerGap
   const whiteW = PAGE_W - 2 * whiteX
   const whiteH = PAGE_H - 2 * whiteY
-  
+
   const contentPadV = 8
   const contentPadH = 12
   const contentL = whiteX + contentPadH
@@ -127,10 +144,10 @@ export async function buildVectorPdf({
   // Small diamond ornaments at each corner
   const dSize = 1.5
   pdf.setFillColor(...GOLD)
-  ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
-    pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
-    pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
-  })
+    ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
+      pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
+      pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
+    })
 
   // ═══ 5. HEADER: Logos + College Name ═══
   const logoH = 22   // Same height for both logos
@@ -298,44 +315,36 @@ export async function buildVectorPdf({
   const bodyY3 = bodyY2 + lineHeight
   pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
 
-  // ═══ 11. SIGNATURE LINES ═══
-  const sigBottomMargin = 35 // More room from bottom for QR + cert ID below
+  // ═══ 11. PRINCIPAL SIGNATURE (centered) ═══
+  const sigBottomMargin = 35 // Room from bottom for QR + cert ID below
   const sigY = whiteY + whiteH - sigBottomMargin
+  const sigLineW = 55 // Signature line width
 
-  const sigNames = [
-    { name: 'Prof. Faculty Name', role: 'Faculty Coordinator' },
-    { name: 'Prof. Event Name', role: 'Event Coordinator' },
-    { name: 'Dr. HOD Name', role: 'HOD, Dept. of CSE' },
-    { name: 'Dr. Principal Name', role: 'Principal, BGMIT' },
-  ]
+  // Principal signature image (above the line)
+  if (principalSignData) {
+    const signImgH = 22  // Height of signature image in mm
+    const signImgW = 22  // Square image (1024x1024)
+    const signImgX = centerX - signImgW / 2
+    const signImgY = sigY - signImgH - 1 // Place above the signature line
+    pdf.addImage(principalSignData, 'PNG', signImgX, signImgY, signImgW, signImgH)
+  }
 
-  const sigCount = sigNames.length
-  const sigTotalW = contentW + 10 // Wider spread for more horizontal spacing
-  const sigStartX = centerX - sigTotalW / 2
-  const sigSpacing = sigTotalW / sigCount
-  const sigLineW = sigSpacing * 0.85 // Longer signature lines (was 0.75)
-
+  // Signature line
   pdf.setDrawColor(...GREY)
   pdf.setLineWidth(0.4)
+  pdf.line(centerX - sigLineW / 2, sigY, centerX + sigLineW / 2, sigY)
 
-  sigNames.forEach((sig, i) => {
-    const sx = sigStartX + sigSpacing * (i + 0.5)
-    const lineY = sigY
-    
-    pdf.line(sx - sigLineW / 2, lineY, sx + sigLineW / 2, lineY)
-    
-    // Faculty name (bold, larger)
-    pdf.setFont('times', 'bold')
-    pdf.setFontSize(11)
-    pdf.setTextColor(...NAVY)
-    pdf.text(sig.name, sx, lineY + 5, { align: 'center' })
-    
-    // Designation/role (smaller than name)
-    pdf.setFont('times', 'italic')
-    pdf.setFontSize(7.5)
-    pdf.setTextColor(...SIG_GREY)
-    pdf.text(sig.role, sx, lineY + 9, { align: 'center' })
-  })
+  // Principal name
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(12)
+  pdf.setTextColor(...NAVY)
+  pdf.text('Dr. Shravankumar B. Kerur', centerX, sigY + 5, { align: 'center' })
+
+  // Designation
+  pdf.setFont('times', 'italic')
+  pdf.setFontSize(8)
+  pdf.setTextColor(...SIG_GREY)
+  pdf.text('Principal, BGMIT', centerX, sigY + 9.5, { align: 'center' })
 
   // ═══ 12. DATE & PLACE ═══
   const datePlaceY = bodyY3 + (sigY - bodyY3) / 2 // Centered between body content and signature lines
@@ -359,7 +368,7 @@ export async function buildVectorPdf({
     const qrX = contentL
     const qrY = sigY + 14 // Below signature role text
     pdf.addImage(qrCodeUrl, 'PNG', qrX, qrY, qrSize, qrSize)
-    
+
     pdf.setDrawColor(204, 204, 204)
     pdf.setLineWidth(0.3)
     pdf.rect(qrX, qrY, qrSize, qrSize, 'S')

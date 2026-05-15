@@ -8,6 +8,7 @@ import { generateCertificateId, generateQRCodeDataUrl, parseQueryDomain } from '
 import { buildVectorPdf } from '../utils/vectorPdf'
 import logoImage from '../../code/logo.png'
 import swamiImage from '../../code/swami.png'
+import principalSignImage from '../../code/principal_sign.png'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
 const ONE_DAY_MS = 24 * 60 * 60 * 1000 // Standard 24 hours
@@ -195,6 +196,7 @@ const GenerateCertificate = () => {
         qrCodeUrl: qrUrl,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
+        principalSignSrc: principalSignImage,
       })
 
       const fileName = `${participant.name.replace(/\s+/g, '_')}_${formData.eventName.replace(/\s+/g, '')}.pdf`
@@ -254,6 +256,7 @@ const GenerateCertificate = () => {
         qrCodeUrl: qrUrl,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
+        principalSignSrc: principalSignImage,
       })
 
       const pdfBase64 = pdf.output('datauristring').split(',')[1]

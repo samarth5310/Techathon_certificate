@@ -9,6 +9,7 @@ import { generateCertificateId, generateQRCodeDataUrl } from '../utils/certifica
 import { buildVectorPdf } from '../utils/vectorPdf'
 import logoImage from '../../code/logo.png'
 import swamiImage from '../../code/swami.png'
+import principalSignImage from '../../code/principal_sign.png'
 import Papa from 'papaparse'
 
 const AdminPanel = () => {
@@ -72,6 +73,7 @@ const AdminPanel = () => {
         qrCodeUrl: dummyQr,
         logoSrc: logoImage,
         swamiSrc: swamiImage,
+        principalSignSrc: principalSignImage,
       })
 
       pdf.save(`Template_${templateNum}_Preview.pdf`)
