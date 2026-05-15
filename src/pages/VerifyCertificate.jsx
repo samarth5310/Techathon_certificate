@@ -140,14 +140,6 @@ const VerifyCertificate = () => {
             <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
               // Techathon1.0 — BGMIT Innovation Council
             </p>
-            <button
-              id="back-btn"
-              onClick={() => navigate('/')}
-              className="brutal-btn brutal-btn-lime"
-              style={{ fontSize: '12px' }}
-            >
-              ← BACK TO PORTAL
-            </button>
           </div>
 
           {/* ═══ SEARCH ═══ */}
@@ -268,12 +260,7 @@ const VerifyCertificate = () => {
                     </p>
                   </div>
 
-                  <div className="data-cell" style={{ gridColumn: '1 / -1' }}>
-                    <p className="brutal-label">PROBLEM STATEMENT</p>
-                    <p className="mono" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                      {certificate.problemStatement || 'N/A'}
-                    </p>
-                  </div>
+
 
                   <div className="data-cell">
                     <p className="brutal-label" style={{ color: 'var(--accent-magenta)' }}>EVENT</p>
@@ -321,8 +308,8 @@ const VerifyCertificate = () => {
                         <p className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>{member.name}</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p className="brutal-label" style={{ fontSize: '10px' }}>PROBLEM STATEMENT / EMAIL</p>
-                        <p className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{member.problemStatement || member.email}</p>
+                        <p className="brutal-label" style={{ fontSize: '10px' }}>EMAIL</p>
+                        <p className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{member.email}</p>
                       </div>
                     </div>
                   ))}
