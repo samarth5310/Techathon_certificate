@@ -93,11 +93,12 @@ const AdminBulkEmail = () => {
         const qrUrl = await generateQRCodeDataUrl(certId, parseQueryDomain())
         
         // 2. Generate Vector PDF
+        const targetDate = p.eventDate || p.date
         const pdf = await buildVectorPdf({
           participantName: p.name,
           certificateId: certId,
           eventName: p.eventName,
-          eventDate: p.eventDate ? (typeof p.eventDate.toDate === 'function' ? p.eventDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' }) : new Date(p.eventDate).toLocaleDateString('en-IN', { dateStyle: 'long' })) : 'N/A',
+          eventDate: targetDate ? (typeof targetDate.toDate === 'function' ? targetDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' }) : new Date(targetDate).toLocaleDateString('en-IN', { dateStyle: 'long' })) : 'N/A',
           qrCodeUrl: qrUrl,
           logoSrc: logoImage,
           swamiSrc: swamiImage,
