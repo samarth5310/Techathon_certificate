@@ -287,20 +287,20 @@ export async function buildVectorPdf({
   pdf.setFontSize(13)
   pdf.setFont('times', 'normal')
 
-  const isTechathon1 = eventName?.toLowerCase().includes('techathon 1.0')
+  const isTechathon1 = eventName?.toLowerCase().includes('techathon')
 
   // Line 1: Normal + Bold + Normal
   const p1 = 'has actively participated in the '
   const w1 = pdf.getTextWidth(p1)
 
-  const p2 = eventName || 'TECHATHON 1.0'
+  const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
   pdf.setFont('times', 'bold')
   const w2 = pdf.getTextWidth(p2)
 
   pdf.setFont('times', 'normal')
   const p3 = isTechathon1 
     ? ', conducted from April 30th to May 1st, 2026. The' 
-    : `, on ${eventDate || 'Date'}. The`
+    : `, on ${eventDate && eventDate !== 'N/A' ? eventDate : 'Date'}. The`
   const w3 = pdf.getTextWidth(p3)
 
   const totalW1 = w1 + w2 + w3
