@@ -152,24 +152,24 @@ const AdminBulkEmail = () => {
     <div style={{ background: 'var(--bg-dark)', color: 'var(--text-primary)', minHeight: '100vh', fontFamily: 'monospace', padding: '20px' }}>
       
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--border-brutal)', paddingBottom: '20px', marginBottom: '20px' }}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 pb-5 mb-5" style={{ borderColor: 'var(--border-brutal)' }}>
         <div>
-          <h1 style={{ color: 'var(--accent-yellow)', margin: 0, fontSize: '24px' }}>BULK EMAIL DISPATCHER</h1>
-          <p style={{ color: 'var(--text-muted)', margin: '5px 0 0 0' }}>// Send certificates directly to participant inboxes</p>
+          <h1 style={{ color: 'var(--accent-yellow)', margin: 0, fontSize: 'clamp(20px, 4vw, 24px)' }}>BULK EMAIL DISPATCHER</h1>
+          <p style={{ color: 'var(--text-muted)', margin: '5px 0 0 0', fontSize: '14px' }}>// Send certificates directly to participant inboxes</p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Link to="/admin" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', padding: '8px 16px', textDecoration: 'none', border: '1px solid var(--border-brutal)' }}>BACK TO ADMIN</Link>
-          <button onClick={handleLogout} style={{ background: 'var(--accent-red)', color: '#000', border: 'none', padding: '8px 16px', cursor: 'pointer', fontWeight: 'bold' }}>LOGOUT</button>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }} className="w-full md:w-auto">
+          <Link to="/admin" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', padding: '8px 16px', textDecoration: 'none', border: '1px solid var(--border-brutal)', textAlign: 'center', flexGrow: 1 }} className="md:flex-grow-0">BACK TO ADMIN</Link>
+          <button onClick={handleLogout} style={{ background: 'var(--accent-red)', color: '#000', border: 'none', padding: '8px 16px', cursor: 'pointer', fontWeight: 'bold', flexGrow: 1 }} className="md:flex-grow-0">LOGOUT</button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '20px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-5">
         
         {/* Left: Participant List */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-brutal)', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-[15px]">
             <h2 style={{ color: 'var(--accent-cyan)', margin: 0, fontSize: '18px' }}>PARTICIPANTS ({participants.length})</h2>
-            <button onClick={toggleAll} style={{ background: 'var(--bg-card-inner)', color: 'var(--text-primary)', border: '1px solid var(--border-brutal)', padding: '4px 12px', cursor: 'pointer' }}>
+            <button onClick={toggleAll} style={{ background: 'var(--bg-card-inner)', color: 'var(--text-primary)', border: '1px solid var(--border-brutal)', padding: '6px 12px', cursor: 'pointer', fontWeight: 'bold' }} className="w-full sm:w-auto">
               {selectedIds.length === participants.length ? 'DESELECT ALL' : 'SELECT ALL'}
             </button>
           </div>
@@ -242,8 +242,9 @@ const AdminBulkEmail = () => {
                 </div>
                 
                 {!collapsedEvents[eventName] && (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                    <thead style={{ background: 'rgba(0,0,0,0.2)', textAlign: 'left' }}>
+                  <div className="overflow-x-auto">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '400px' }}>
+                      <thead style={{ background: 'rgba(0,0,0,0.2)', textAlign: 'left' }}>
                       <tr>
                         <th style={{ padding: '10px', width: '40px' }}></th>
                         <th style={{ padding: '10px' }}>NAME</th>
@@ -271,6 +272,7 @@ const AdminBulkEmail = () => {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 )}
               </div>
             ))}
