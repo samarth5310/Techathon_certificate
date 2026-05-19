@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import CertificatePreview from '../components/CertificatePreview'
 import Template3 from '../components/Template3'
-import { collection, getDocs, writeBatch, doc, addDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, getDocs, getDoc, setDoc, writeBatch, doc, addDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { db, auth } from '../firebase/config'
@@ -38,6 +38,42 @@ const AdminPanel = () => {
   const [addingEvent, setAddingEvent] = useState(false)
   const [eventMessage, setEventMessage] = useState('')
 
+  // Settings state
+  const [participantOptions, setParticipantOptions] = useState({
+    email: false,
+    linkedin: true,
+    whatsapp: true,
+    download: true,
+  })
+  const [optionsLoading, setOptionsLoading] = useState(false)
+
+  const fetchOptions = async () => {
+    setOptionsLoading(true)
+    try {
+      const docRef = doc(db, 'settings', 'participantOptions')
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        setParticipantOptions(docSnap.data())
+      }
+    } catch (err) {
+      console.error('Failed to fetch options', err)
+    } finally {
+      setOptionsLoading(false)
+    }
+  }
+
+  const toggleOption = async (key) => {
+    const newValue = !participantOptions[key]
+    setParticipantOptions(prev => ({ ...prev, [key]: newValue }))
+    try {
+      const docRef = doc(db, 'settings', 'participantOptions')
+      await setDoc(docRef, { [key]: newValue }, { merge: true })
+    } catch (err) {
+      console.error('Failed to update option', err)
+      setParticipantOptions(prev => ({ ...prev, [key]: !newValue }))
+    }
+  }
+
   // Auth listener
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -52,7 +88,10 @@ const AdminPanel = () => {
 
   // Fetch events on mount
   useEffect(() => {
-    if (user) fetchEvents()
+    if (user) {
+      fetchEvents()
+      fetchOptions()
+    }
   }, [user])
 
   const handleLogout = async () => {
@@ -397,6 +436,41 @@ const AdminPanel = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* ═══ PARTICIPANT SETTINGS ═══ */}
+          <div className="brutal-card section-gap" style={{ padding: '28px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ width: '4px', height: '24px', background: 'var(--accent-magenta)', flexShrink: 0 }}></div>
+              <h2 className="brutal-heading" style={{ fontSize: '15px', color: 'var(--accent-magenta)' }}>
+                ▸ PARTICIPANT OPTIONS
+              </h2>
+            </div>
+            
+            <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+              // Enable or disable features available to participants on the portal.
+            </p>
+
+            {optionsLoading ? (
+              <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Loading settings...</p>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                {Object.entries(participantOptions).map(([key, value]) => (
+                  <div key={key} className="data-cell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px' }}>
+                    <span className="mono" style={{ fontSize: '14px', textTransform: 'uppercase', color: 'var(--text-primary)' }}>
+                      {key}
+                    </span>
+                    <button
+                      onClick={() => toggleOption(key)}
+                      className={`brutal-btn ${value ? 'brutal-btn-lime' : 'brutal-btn-red'}`}
+                      style={{ padding: '6px 12px', fontSize: '12px' }}
+                    >
+                      {value ? 'ENABLED' : 'DISABLED'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ═══ STATISTICS ═══ */}
