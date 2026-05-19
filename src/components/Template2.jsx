@@ -102,18 +102,16 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         <img src={logoImage} alt="" style={{ position: 'absolute', top: mm(8), left: mm(12), width: mm(16.9), height: mm(22), objectFit: 'contain', zIndex: 1 }} />
         <img src={swamiImage} alt="" style={{ position: 'absolute', top: mm(8), right: mm(12), width: mm(18.98), height: mm(22), objectFit: 'contain', zIndex: 1 }} />
 
-        {/* College Header */}
-        <div style={{ position: 'absolute', top: mm(10), width: '100%', textAlign: 'center', zIndex: 1 }}>
-          <p style={{ margin: 0, fontSize: mm(4.58), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.05em', textShadow: `${mm(0.5)} ${mm(0.5)} 0 #B4BEDC` }}>
-            B.V.V SANGHA'S
-          </p>
-          <p style={{ margin: `${mm(1.5)} 0 0`, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.5)} ${mm(0.5)} 0 #B4BEDC` }}>
-            BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF
-          </p>
-          <p style={{ margin: `${mm(1.5)} 0 0`, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.5)} ${mm(0.5)} 0 #B4BEDC` }}>
-            TECHNOLOGY, MUDHOL
-          </p>
-        </div>
+        {/* College Header (Lines absolutely positioned to match vector baselines) */}
+        <p style={{ position: 'absolute', top: mm(10), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.58), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.05em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+          B.V.V SANGHA'S
+        </p>
+        <p style={{ position: 'absolute', top: mm(16.5), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+          BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF
+        </p>
+        <p style={{ position: 'absolute', top: mm(23), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+          TECHNOLOGY, MUDHOL
+        </p>
 
         {/* Gold Divider with Dots */}
         <div style={{
@@ -157,47 +155,47 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Central Content Area */}
-        <div style={{ position: 'absolute', top: mm(57), width: '100%', textAlign: 'center', zIndex: 1 }}>
-          <p style={{ margin: 0, fontSize: mm(4.58), fontWeight: 700, color: '#333' }}>
+        <div style={{ position: 'absolute', top: mm(58), width: '100%', textAlign: 'center', zIndex: 1 }}>
+          <p style={{ margin: 0, fontSize: mm(4.23), fontWeight: 700, color: '#333' }}>
             THIS IS TO CERTIFY THAT
           </p>
         </div>
 
-        <div style={{ position: 'absolute', top: mm(66), width: '100%', textAlign: 'center', zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(68), width: '100%', textAlign: 'center', zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(nameSizeMm), fontWeight: 700, color: '#1E3A8A' }}>
             {participantName || 'Participant Name'}
           </p>
           <div style={{ width: mm(120), height: mm(0.5), background: '#333', margin: `${mm(2)} auto 0` }} />
         </div>
 
-        <div style={{ position: 'absolute', top: mm(88), width: '100%', textAlign: 'center', zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(90), width: '100%', textAlign: 'center', zIndex: 1 }}>
           <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(230) }}>
             has actively participated in the <strong>24-Hour Hackathon TECHATHON 1.0</strong>, conducted from April 30th to May 1st, 2026. The event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm, creativity, and a steadfast commitment to innovation.
           </p>
         </div>
 
         {/* Date and Place */}
-        <div style={{ position: 'absolute', top: mm(121), left: mm(14), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(129), left: mm(12), zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(4.23), color: '#333' }}>
             <strong>Date:</strong> 01 May 2026
           </p>
         </div>
-        <div style={{ position: 'absolute', top: mm(121), right: mm(14), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(129), right: mm(12), zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(4.23), color: '#333' }}>
             <strong>Place:</strong> Mudhol
           </p>
         </div>
 
         {/* Signature */}
-        <div style={{ position: 'absolute', top: mm(120), left: '50%', transform: 'translateX(-50%)', width: mm(60), height: mm(40), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(136), left: '50%', transform: 'translateX(-50%)', width: mm(60), height: mm(40), zIndex: 1 }}>
           <img src={principalSignImage} alt="Signature" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', height: mm(22) }} />
-          <div style={{ position: 'absolute', top: mm(18), left: '50%', transform: 'translateX(-50%)', width: mm(55), height: mm(0.5), background: '#333' }} />
-          <p style={{ position: 'absolute', top: mm(20), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.23), fontWeight: 700, color: '#1E3A8A' }}>Dr. Shravankumar B. Kerur</p>
-          <p style={{ position: 'absolute', top: mm(25), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(3.17), color: '#555', fontStyle: 'italic' }}>Principal, BGMIT</p>
+          <div style={{ position: 'absolute', top: mm(23), left: '50%', transform: 'translateX(-50%)', width: mm(55), height: mm(0.4), background: '#333' }} />
+          <p style={{ position: 'absolute', top: mm(28), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.23), fontWeight: 700, color: '#1E3A8A', lineHeight: 1 }}>Dr. Shravankumar B. Kerur</p>
+          <p style={{ position: 'absolute', top: mm(32.5), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(2.82), color: '#555', fontStyle: 'italic', lineHeight: 1 }}>Principal, BGMIT</p>
         </div>
 
         {/* QR Code */}
-        <div style={{ position: 'absolute', top: mm(158), left: mm(14), zIndex: 2 }}>
+        <div style={{ position: 'absolute', top: mm(173), left: mm(12), zIndex: 2 }}>
           {qrCodeUrl ? (
             <img src={qrCodeUrl} alt="QR Code" style={{ width: mm(14), height: mm(14), border: `${mm(0.3)} solid #ccc` }} />
           ) : (
@@ -206,9 +204,9 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Certificate ID */}
-        <div style={{ position: 'absolute', top: mm(158), right: mm(14), zIndex: 2, textAlign: 'right' }}>
-          <p style={{ margin: 0, fontSize: mm(3.52), color: '#666', fontFamily: "'Courier New', monospace" }}>Certificate ID:</p>
-          <p style={{ margin: `${mm(2.5)} 0 0`, fontSize: mm(4.23), color: '#1E3A8A', fontWeight: 700, fontFamily: "'Courier New', monospace" }}>
+        <div style={{ position: 'absolute', top: mm(174), right: mm(12), zIndex: 2, textAlign: 'right' }}>
+          <p style={{ margin: 0, fontSize: mm(2.82), color: '#666', fontFamily: "'Courier New', monospace", lineHeight: 1 }}>Certificate ID:</p>
+          <p style={{ margin: `${mm(0.7)} 0 0`, fontSize: mm(2.82), color: '#1E3A8A', fontWeight: 700, fontFamily: "'Courier New', monospace", lineHeight: 1 }}>
             {certificateId || 'BGMIT-XXXX-XXXX'}
           </p>
         </div>
