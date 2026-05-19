@@ -1,6 +1,7 @@
 import React from 'react';
 import logoImage from '../../code/logo.png';
 import swamiImage from '../../code/swami.png';
+import principalSignImage from '../../code/principal_sign.png';
 
 const Template2 = ({ participantName, eventName, certificateDate, certificateId, qrCodeUrl, department }) => {
   const nameLen = (participantName || 'Participant Name').length;
@@ -121,14 +122,37 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
           >
             <div
               style={{
-                padding: '16px 40px',
+                background: '#1E3A8A',
+                padding: '12px 40px',
                 textAlign: 'center',
+                position: 'relative'
               }}
             >
+              {/* Left and right banner tails */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: '-20px',
+                width: 0,
+                height: 0,
+                borderTop: '24px solid #1E3A8A',
+                borderBottom: '24px solid #1E3A8A',
+                borderLeft: '20px solid transparent'
+              }} />
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: '-20px',
+                width: 0,
+                height: 0,
+                borderTop: '24px solid #1E3A8A',
+                borderBottom: '24px solid #1E3A8A',
+                borderRight: '20px solid transparent'
+              }} />
               <p
                 style={{
                   margin: 0,
-                  color: '#1E3A8A',
+                  color: '#FFFFFF',
                   fontSize: '24px',
                   fontWeight: 700,
                   letterSpacing: '0.25em',
@@ -208,13 +232,15 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
 
           </div>
 
-          {/* Date and Place - moved down */}
+          {/* Date and Place */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            margin: '0 0 30px',
-            position: 'relative',
+            position: 'absolute',
+            bottom: '85px',
+            left: '55px',
+            right: '55px',
             zIndex: 1,
           }}>
             <p style={{ margin: 0, fontSize: '13px', color: '#333' }}>
@@ -225,49 +251,41 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
             </p>
           </div>
 
-          {/* Signature section - 4 signatures */}
+          {/* Signature section - 1 signature */}
           <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
+            position: 'absolute',
+            bottom: '60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
             textAlign: 'center',
-            gap: '8px',
-            position: 'relative',
             zIndex: 1,
-            marginBottom: '45px',
+            width: '240px'
           }}>
-            {[
-              { name: 'Prof. Faculty Name', role: 'Faculty Coordinator' },
-              { name: 'Prof. Event Name', role: 'Event Coordinator' },
-              { name: 'Dr. HOD Name', role: 'HOD, Dept. of CSE' },
-              { name: 'Dr. Principal Name', role: 'Principal, BGMIT' },
-            ].map((sig, i) => (
-              <div key={i} style={{ width: '23%' }}>
-                <div style={{
-                  width: '80%',
-                  margin: '0 auto',
-                  borderBottom: '1.5px solid #333',
-                  marginBottom: '4px',
-                  height: '38px',
-                }} />
-                <p style={{
-                  margin: 0,
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: '#1E3A8A',
-                  lineHeight: 1.3,
-                }}>
-                  {sig.name}
-                </p>
-                <p style={{
-                  margin: '2px 0 0',
-                  fontSize: '9px',
-                  color: '#555',
-                  lineHeight: 1.2,
-                }}>
-                  {sig.role}
-                </p>
-              </div>
-            ))}
+            <img src={principalSignImage} alt="Principal Signature" style={{ height: '60px', marginBottom: '0px', objectFit: 'contain' }} />
+            <div style={{
+              width: '100%',
+              margin: '0 auto',
+              borderBottom: '1.5px solid #333',
+              marginBottom: '8px',
+            }} />
+            <p style={{
+              margin: 0,
+              fontSize: '15px',
+              fontWeight: 700,
+              color: '#1E3A8A',
+              lineHeight: 1.3,
+            }}>
+              Dr. Shravankumar B. Kerur
+            </p>
+            <p style={{
+              margin: '2px 0 0',
+              fontSize: '12px',
+              color: '#555',
+              lineHeight: 1.2,
+              fontStyle: 'italic'
+            }}>
+              Principal, BGMIT
+            </p>
           </div>
 
           {/* QR Code - bottom left, below signatures */}
