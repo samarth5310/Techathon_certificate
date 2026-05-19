@@ -72,6 +72,8 @@ app.post('/api/send-certificate-email', async (req, res) => {
               
               <p style="margin-bottom: 20px;">Thank you for being a part of Techathon 1.0 and contributing to the spirit of innovation and technology. We look forward to your participation in many more future events and achievements.</p>
               
+              <p style="margin-bottom: 20px; font-size: 13px; color: #4B5563;">If you need to download or share your certificate across platforms, use this link: <a href="https://techathon-certificates.onrender.com/" style="color: #3730A3; font-weight: bold; text-decoration: underline;">click here</a>.</p>
+              
               <p style="margin-bottom: 5px;">Best Regards,</p>
               <p style="margin-top: 0; color: #4B5563; font-size: 13px;">
                 <strong style="color: #1F2937;">BGMIT Innovation Council</strong><br/>

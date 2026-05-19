@@ -624,15 +624,15 @@ const GenerateCertificate = () => {
                 )}
               </div>
 
-              {/* ── RIGHT: EMAIL SECTION ── */}
+              {/* ── RIGHT: DOWNLOAD SECTION ── */}
               <div className="brutal-card" style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
                   <div style={{ flex: '1 1 200px' }}>
                     <h2 className="brutal-heading" style={{ fontSize: 'clamp(18px, 3vw, 28px)', color: 'var(--accent-magenta)', lineHeight: 1.2 }}>
-                      EMAIL CERTIFICATE
+                      DOWNLOAD CERTIFICATE
                     </h2>
                     <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', maxWidth: '400px' }}>
-                      // PDF generated in the background and sent directly to the participant's registered email
+                      // PDF generated locally and downloaded directly to your device
                     </p>
                   </div>
 
@@ -651,29 +651,11 @@ const GenerateCertificate = () => {
                       </svg>
                       {downloading ? '[ DOWNLOADING... ]' : 'DOWNLOAD ↓'}
                     </button>
-                    <button
-                      id="send-email-btn"
-                      type="button"
-                      onClick={sendCertificateByEmail}
-                      disabled={sending || !participant || !canSendEmail}
-                      className="brutal-btn brutal-btn-cyan"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="20" height="16" x="2" y="4" rx="2"/>
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                      </svg>
-                      {sending ? '[ SENDING... ]' : !canSendEmail ? '[ COOLDOWN ]' : 'EMAIL CERTIFICATE'}
-                    </button>
                   </div>
                 </div>
 
 
-                {/* Email cooldown notice */}
-                {certificateEmailSentAt && !canSendEmail && (
-                  <div className="msg-bar msg-bar-warn" style={{ marginTop: '16px' }}>
-                    // EMAIL COOLDOWN: Next request after {nextAllowedAt.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </div>
-                )}
+
 
                 {/* Success / Error notice */}
                 {notice && (
@@ -689,7 +671,7 @@ const GenerateCertificate = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span className="status-dot status-dot-green"></span>
                       <span className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        Participant verified — ready to generate & send
+                        Participant verified — ready to download & share
                       </span>
                     </div>
                     {participant.certificateId && (
@@ -775,7 +757,7 @@ const GenerateCertificate = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span className="status-dot status-dot-red"></span>
                       <span className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        Validate participant first to enable email
+                        Validate participant first to enable download
                       </span>
                     </div>
                   </div>
