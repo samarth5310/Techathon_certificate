@@ -56,7 +56,7 @@ const GenerateCertificate = () => {
         const docRef = doc(db, 'settings', 'participantOptions')
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-          setParticipantOptions(docSnap.data())
+          setParticipantOptions(prev => ({ ...prev, ...docSnap.data() }))
         }
       } catch (err) {
         console.error('Failed to fetch options:', err)
