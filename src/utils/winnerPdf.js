@@ -1,0 +1,446 @@
+import jsPDF from 'jspdf'
+
+// A4 Landscape dimensions in mm
+const PAGE_W = 297
+const PAGE_H = 210
+
+/**
+ * Helper: load an image from a URL/path and return a base64 data URL.
+ */
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      const isSvg = src.includes('.svg') || src.startsWith('data:image/svg+xml');
+      const scale = isSvg ? 8 : 1;
+      
+      let w = img.naturalWidth * scale
+      let h = img.naturalHeight * scale
+      
+      const MAX_DIM = 800
+      if (w > MAX_DIM || h > MAX_DIM) {
+        if (w > h) { h = (MAX_DIM / w) * h; w = MAX_DIM }
+        else { w = (MAX_DIM / h) * w; h = MAX_DIM }
+      }
+
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/png'))
+    }
+    img.onerror = reject
+    img.src = src
+  })
+}
+
+/** Prize tier config */
+const PRIZE_CONFIG = {
+  1: {
+    label: 'FIRST PRIZE',
+    ordinal: '1st',
+    amount: '₹15,000',
+    badge: [212, 175, 55],     // Gold #D4AF37
+    badgeDark: [170, 140, 44], // Darker gold
+    badgeLight: [240, 220, 130], // Lighter gold
+    ribbonColor: [180, 50, 50],
+  },
+  2: {
+    label: 'SECOND PRIZE',
+    ordinal: '2nd',
+    amount: '₹10,000',
+    badge: [192, 192, 192],     // Silver
+    badgeDark: [140, 140, 140],
+    badgeLight: [230, 230, 235],
+    ribbonColor: [70, 70, 130],
+  },
+  3: {
+    label: 'THIRD PRIZE',
+    ordinal: '3rd',
+    amount: '₹5,000',
+    badge: [205, 127, 50],     // Bronze #CD7F32
+    badgeDark: [160, 100, 40],
+    badgeLight: [230, 180, 100],
+    ribbonColor: [100, 50, 30],
+  },
+}
+
+/**
+ * Draw a medal badge at the given center position.
+ */
+function drawMedal(pdf, cx, cy, prizeNum) {
+  const cfg = PRIZE_CONFIG[prizeNum] || PRIZE_CONFIG[1]
+  const radius = 12
+
+  // Ribbon tails behind the medal
+  pdf.setFillColor(...cfg.ribbonColor)
+  // Left ribbon
+  pdf.triangle(
+    cx - 6, cy + radius - 2,
+    cx - 10, cy + radius + 16,
+    cx - 2, cy + radius + 12,
+    'F'
+  )
+  // Right ribbon
+  pdf.triangle(
+    cx + 6, cy + radius - 2,
+    cx + 10, cy + radius + 16,
+    cx + 2, cy + radius + 12,
+    'F'
+  )
+
+  // Outer ring (darker)
+  pdf.setFillColor(...cfg.badgeDark)
+  pdf.circle(cx, cy, radius + 1.5, 'F')
+
+  // Main medal disc
+  pdf.setFillColor(...cfg.badge)
+  pdf.circle(cx, cy, radius, 'F')
+
+  // Inner highlight ring
+  pdf.setDrawColor(...cfg.badgeLight)
+  pdf.setLineWidth(0.6)
+  pdf.circle(cx, cy, radius - 2.5, 'S')
+
+  // Star in center
+  pdf.setFillColor(...cfg.badgeLight)
+  const starR = 4
+  const starPts = 5
+  const innerR = starR * 0.4
+  const points = []
+  for (let i = 0; i < starPts * 2; i++) {
+    const angle = (Math.PI / starPts) * i - Math.PI / 2
+    const r = i % 2 === 0 ? starR : innerR
+    points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)])
+  }
+  // Draw star as filled polygon using triangles from center
+  for (let i = 0; i < points.length; i++) {
+    const next = points[(i + 1) % points.length]
+    pdf.triangle(cx, cy, points[i][0], points[i][1], next[0], next[1], 'F')
+  }
+
+  // Ordinal text below medal
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(10)
+  pdf.setTextColor(...cfg.badgeDark)
+  pdf.text(cfg.ordinal, cx, cy + radius + 20, { align: 'center' })
+}
+
+/**
+ * Build a winner certificate PDF.
+ */
+export async function buildWinnerPdf({
+  participantName = 'Winner Name',
+  teamName = '',
+  certificateId = 'BGMIT-XXXX-XXXX',
+  eventName = 'TECHATHON 1.0',
+  eventDate = '01 May 2026',
+  prizePosition = 1,
+  qrCodeUrl,
+  logoSrc,
+  swamiSrc,
+  principalSignSrc,
+}) {
+  const prizeNum = Math.max(1, Math.min(3, Number(prizePosition) || 1))
+  const prize = PRIZE_CONFIG[prizeNum]
+
+  const [logoData, swamiData, principalSignData] = await Promise.all([
+    logoSrc ? loadImage(logoSrc) : Promise.resolve(null),
+    swamiSrc ? loadImage(swamiSrc) : Promise.resolve(null),
+    principalSignSrc ? loadImage(principalSignSrc) : Promise.resolve(null),
+  ])
+
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true })
+
+  // ─── COLORS ───
+  const INDIGO = [67, 56, 202]
+  const GOLD = [212, 175, 55]
+  const NAVY = [30, 58, 138]
+  const IVORY = [250, 249, 246]
+  const BLACK = [0, 0, 0]
+  const GREY = [51, 51, 51]
+  const LGREY = [102, 102, 102]
+  const SIG_GREY = [85, 85, 85]
+
+  // ─── LAYOUT METRICS ───
+  const outerPad = 9
+  const goldBorderW = 3
+  const innerGap = 4
+  const whiteX = outerPad + goldBorderW + innerGap
+  const whiteY = outerPad + goldBorderW + innerGap
+  const whiteW = PAGE_W - 2 * whiteX
+  const whiteH = PAGE_H - 2 * whiteY
+  const contentPadV = 8
+  const contentPadH = 12
+  const contentL = whiteX + contentPadH
+  const contentR = whiteX + whiteW - contentPadH
+  const centerX = PAGE_W / 2
+  const contentW = contentR - contentL
+
+  // ═══ 1. OUTER INDIGO FILL ═══
+  pdf.setFillColor(...INDIGO)
+  pdf.rect(0, 0, PAGE_W, PAGE_H, 'F')
+
+  // ═══ 2. GOLD BORDER ═══
+  const goldBorderCenter = outerPad + goldBorderW / 2
+  pdf.setDrawColor(...GOLD)
+  pdf.setLineWidth(goldBorderW)
+  pdf.rect(goldBorderCenter, goldBorderCenter, PAGE_W - 2 * goldBorderCenter, PAGE_H - 2 * goldBorderCenter, 'S')
+
+  // ═══ 3. IVORY CONTENT AREA ═══
+  pdf.setFillColor(...IVORY)
+  pdf.rect(whiteX, whiteY, whiteW, whiteH, 'F')
+
+  // ═══ 4. WATERMARK ═══
+  if (logoData) {
+    pdf.saveGraphicsState()
+    pdf.setGState(new pdf.GState({ opacity: 0.05 }))
+    const wmH = 100, wmW = 68
+    pdf.addImage(logoData, 'PNG', centerX - wmW / 2, PAGE_H / 2 - wmH / 2, wmW, wmH)
+    pdf.restoreGraphicsState()
+  }
+
+  // ═══ 4b. CORNER ACCENTS ═══
+  const cornerLen = 18
+  const cornerInset = 4
+  pdf.setDrawColor(...GOLD)
+  pdf.setLineWidth(0.8)
+
+  const cTLx = whiteX + cornerInset, cTLy = whiteY + cornerInset
+  pdf.line(cTLx, cTLy, cTLx + cornerLen, cTLy); pdf.line(cTLx, cTLy, cTLx, cTLy + cornerLen)
+  const cTRx = whiteX + whiteW - cornerInset, cTRy = whiteY + cornerInset
+  pdf.line(cTRx, cTRy, cTRx - cornerLen, cTRy); pdf.line(cTRx, cTRy, cTRx, cTRy + cornerLen)
+  const cBLx = whiteX + cornerInset, cBLy = whiteY + whiteH - cornerInset
+  pdf.line(cBLx, cBLy, cBLx + cornerLen, cBLy); pdf.line(cBLx, cBLy, cBLx, cBLy - cornerLen)
+  const cBRx = whiteX + whiteW - cornerInset, cBRy = whiteY + whiteH - cornerInset
+  pdf.line(cBRx, cBRy, cBRx - cornerLen, cBRy); pdf.line(cBRx, cBRy, cBRx, cBRy - cornerLen)
+
+  // Diamond ornaments
+  const dSize = 1.5
+  pdf.setFillColor(...GOLD)
+  ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
+    pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
+    pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
+  })
+
+  // ═══ 5. HEADER: Logos + College Name ═══
+  const logoH = 22
+  const leftLogoW = logoH * (214 / 278)
+  const rightLogoW = logoH * (195 / 226)
+  const logoY = whiteY + contentPadV
+
+  if (logoData) pdf.addImage(logoData, 'PNG', contentL, logoY, leftLogoW, logoH)
+  if (swamiData) pdf.addImage(swamiData, 'PNG', contentR - rightLogoW, logoY, rightLogoW, logoH)
+
+  // Embossed college text
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(13)
+  const bvvY = logoY + 6
+  const embossOff = 0.4
+
+  pdf.setTextColor(180, 190, 220)
+  pdf.text("B.V.V SANGHA'S", centerX + embossOff, bvvY + embossOff, { align: 'center' })
+  pdf.setTextColor(...NAVY)
+  pdf.text("B.V.V SANGHA'S", centerX, bvvY, { align: 'center' })
+
+  pdf.setFontSize(16)
+  const collegeY1 = bvvY + 6.5
+  pdf.setTextColor(180, 190, 220)
+  pdf.text('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF', centerX + embossOff, collegeY1 + embossOff, { align: 'center' })
+  pdf.setTextColor(...NAVY)
+  pdf.text('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF', centerX, collegeY1, { align: 'center' })
+
+  const collegeY2 = collegeY1 + 6.5
+  pdf.setTextColor(180, 190, 220)
+  pdf.text('TECHNOLOGY, MUDHOL', centerX + embossOff, collegeY2 + embossOff, { align: 'center' })
+  pdf.setTextColor(...NAVY)
+  pdf.text('TECHNOLOGY, MUDHOL', centerX, collegeY2, { align: 'center' })
+
+  // ═══ 6. GOLD DIVIDER ═══
+  const divY = collegeY2 + 5
+  const collegeMaxW = pdf.getTextWidth('BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF')
+  const divW = collegeMaxW * 0.95
+  const divL = centerX - divW / 2
+  const divR = centerX + divW / 2
+  const dotR = 0.9
+
+  pdf.setFillColor(...GOLD)
+  pdf.circle(divL, divY, dotR, 'F'); pdf.circle(divR, divY, dotR, 'F')
+  pdf.setDrawColor(...GOLD)
+  pdf.setLineWidth(0.5)
+  pdf.line(divL + dotR + 1, divY, divR - dotR - 1, divY)
+
+  // ═══ 7. CERTIFICATE TITLE (ACHIEVEMENT banner) ═══
+  const titleY = divY + 14
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(18)
+
+  const titleText = 'C E R T I F I C A T E   O F   A C H I E V E M E N T'
+  const titleTextW = pdf.getTextWidth(titleText)
+  const bannerPadH = 16
+  const bannerH = 11
+  const bannerW = titleTextW + bannerPadH * 2
+  const bannerX = centerX - bannerW / 2
+  const bannerY = titleY - bannerH + 2.5
+
+  pdf.setFillColor(...NAVY)
+  pdf.rect(bannerX, bannerY, bannerW, bannerH, 'F')
+
+  // Ribbon tails
+  const tailW = 5
+  pdf.triangle(bannerX, bannerY, bannerX - tailW, bannerY + bannerH / 2, bannerX, bannerY + bannerH, 'F')
+  pdf.triangle(bannerX + bannerW, bannerY, bannerX + bannerW + tailW, bannerY + bannerH / 2, bannerX + bannerW, bannerY + bannerH, 'F')
+
+  pdf.setTextColor(255, 255, 255)
+  pdf.text(titleText, centerX, titleY, { align: 'center' })
+
+  // ═══ 8. "THIS IS TO CERTIFY THAT" ═══
+  const certifyY = titleY + 14
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(12)
+  pdf.setTextColor(...GREY)
+  pdf.text('THIS IS TO CERTIFY THAT', centerX, certifyY, { align: 'center' })
+
+  // ═══ 9. PARTICIPANT / TEAM NAME ═══
+  const displayName = teamName ? `${participantName} (Team: ${teamName})` : participantName
+  const nameLen = displayName.length
+  let nameFontPt = 28
+  if (nameLen > 40) nameFontPt = 18
+  else if (nameLen > 30) nameFontPt = 20
+  else if (nameLen > 20) nameFontPt = 24
+
+  const nameY = certifyY + 13
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(nameFontPt)
+  pdf.setTextColor(...NAVY)
+  pdf.text(displayName, centerX, nameY, { align: 'center' })
+
+  // Underline
+  const nameTextW = pdf.getTextWidth(displayName)
+  const underlineW = Math.max(nameTextW + 10, contentW * 0.6)
+  const underlineY = nameY + 3
+  pdf.setDrawColor(...GREY)
+  pdf.setLineWidth(0.5)
+  pdf.line(centerX - underlineW / 2, underlineY, centerX + underlineW / 2, underlineY)
+
+  // ═══ 10. MEDAL BADGE (left side) ═══
+  const medalCx = contentL + 20
+  const medalCy = underlineY + 22
+  drawMedal(pdf, medalCx, medalCy, prizeNum)
+
+  // ═══ 11. BODY TEXT (right of medal, custom per prize) ═══
+  pdf.setTextColor(...GREY)
+  const bodyStartX = medalCx + 28
+  const bodyMaxW = contentR - bodyStartX - 5
+  const bodyY1 = underlineY + 10
+  const lineHeight = 6
+
+  pdf.setFont('times', 'normal')
+  pdf.setFontSize(12)
+
+  // Line 1: "for securing FIRST PRIZE in TECHATHON 1.0 and demonstrating outstanding"
+  const l1p1 = 'for securing '
+  pdf.text(l1p1, bodyStartX, bodyY1)
+  const l1p1w = pdf.getTextWidth(l1p1)
+  pdf.setFont('times', 'bold')
+  pdf.setTextColor(...prize.badge)
+  pdf.text(prize.label, bodyStartX + l1p1w, bodyY1)
+  const l1p2w = pdf.getTextWidth(prize.label)
+  pdf.setFont('times', 'normal')
+  pdf.setTextColor(...GREY)
+  pdf.text(' in TECHATHON 1.0 and demonstrating outstanding', bodyStartX + l1p1w + l1p2w, bodyY1)
+
+  // Line 2
+  const bodyY2 = bodyY1 + lineHeight
+  pdf.text('innovation, technical excellence, and problem-solving skills throughout', bodyStartX, bodyY2)
+
+  // Line 3
+  const bodyY3 = bodyY2 + lineHeight
+  pdf.text('the competition. In recognition of this remarkable achievement, the', bodyStartX, bodyY3)
+
+  // Line 4: "participant/team has been awarded a Cash Prize of ₹15,000."
+  const bodyY4 = bodyY3 + lineHeight
+  const l4p1 = 'participant/team has been awarded a Cash Prize of '
+  pdf.text(l4p1, bodyStartX, bodyY4)
+  const l4p1w = pdf.getTextWidth(l4p1)
+  pdf.setFont('times', 'bold')
+  pdf.setTextColor(...NAVY)
+  pdf.text(prize.amount + '.', bodyStartX + l4p1w, bodyY4)
+
+  // Line 5
+  const bodyY5 = bodyY4 + lineHeight + 2
+  pdf.setFont('times', 'italic')
+  pdf.setFontSize(11)
+  pdf.setTextColor(...LGREY)
+  pdf.text('Your dedication, creativity, and performance were truly exceptional and inspiring.', bodyStartX, bodyY5)
+
+  // ═══ 12. PRINCIPAL SIGNATURE ═══
+  const sigBottomMargin = 35
+  const sigY = whiteY + whiteH - sigBottomMargin
+
+  if (principalSignData) {
+    const signImgH = 22, signImgW = 22
+    const signImgX = centerX - signImgW / 2
+    const signImgY = sigY - signImgH - 1
+    pdf.addImage(principalSignData, 'PNG', signImgX, signImgY, signImgW, signImgH)
+  }
+
+  const sigLineW = 55
+  pdf.setDrawColor(...GREY)
+  pdf.setLineWidth(0.4)
+  pdf.line(centerX - sigLineW / 2, sigY, centerX + sigLineW / 2, sigY)
+
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(12)
+  pdf.setTextColor(...NAVY)
+  pdf.text('Dr. Shravankumar B. Kerur', centerX, sigY + 5, { align: 'center' })
+
+  pdf.setFont('times', 'italic')
+  pdf.setFontSize(8)
+  pdf.setTextColor(...SIG_GREY)
+  pdf.text('Principal, BGMIT', centerX, sigY + 9.5, { align: 'center' })
+
+  // ═══ 13. DATE & PLACE ═══
+  const datePlaceY = bodyY5 + (sigY - bodyY5) / 2 + 2
+
+  pdf.setFont('times', 'bold')
+  pdf.setFontSize(12)
+  pdf.setTextColor(...GREY)
+  pdf.text('Date:', contentL, datePlaceY)
+  pdf.setFont('times', 'normal')
+  pdf.text(' 01 May 2026', contentL + pdf.getTextWidth('Date:') + 1, datePlaceY)
+
+  pdf.setFont('times', 'bold')
+  pdf.text('Place:', contentR - pdf.getTextWidth('Place:') - pdf.getTextWidth(' Mudhol') - 1, datePlaceY)
+  pdf.setFont('times', 'normal')
+  pdf.text(' Mudhol', contentR - pdf.getTextWidth(' Mudhol'), datePlaceY)
+
+  // ═══ 14. QR CODE ═══
+  if (qrCodeUrl) {
+    const qrSize = 14
+    const qrX = contentL
+    const qrY = sigY + 14
+    pdf.addImage(qrCodeUrl, 'PNG', qrX, qrY, qrSize, qrSize)
+    pdf.setDrawColor(204, 204, 204)
+    pdf.setLineWidth(0.3)
+    pdf.rect(qrX, qrY, qrSize, qrSize, 'S')
+  }
+
+  // ═══ 15. CERTIFICATE ID ═══
+  const certIdX = contentR
+  const certIdY = sigY + 22
+
+  pdf.setFont('courier', 'normal')
+  pdf.setFontSize(8)
+  pdf.setTextColor(...LGREY)
+  pdf.text('Certificate ID:', certIdX, certIdY - 4.5, { align: 'right' })
+
+  pdf.setFont('courier', 'bold')
+  pdf.setFontSize(8)
+  pdf.setTextColor(...NAVY)
+  pdf.text(certificateId, certIdX, certIdY - 1, { align: 'right' })
+
+  return pdf
+}

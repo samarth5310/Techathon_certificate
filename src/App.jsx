@@ -5,6 +5,7 @@ import AdminPanel from './pages/AdminPanel'
 import AdminLogin from './pages/AdminLogin'
 
 import AdminBulkEmail from './pages/AdminBulkEmail'
+import AdminWinners from './pages/AdminWinners'
 
 import { useState, useEffect } from 'react'
 
@@ -51,6 +52,7 @@ function App() {
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/bulk-email" element={<AdminBulkEmail />} />
+          <Route path="/admin/winners" element={<AdminWinners />} />
         </Routes>
       </BrowserRouter>
     </>

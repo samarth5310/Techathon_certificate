@@ -334,6 +334,13 @@ const AdminPanel = () => {
                   BULK EMAIL ✉
                 </button>
                 <button
+                  onClick={() => navigate('/admin/winners')}
+                  className="brutal-btn"
+                  style={{ padding: '6px 12px', fontSize: '11px', boxShadow: '2px 2px 0px #000', background: '#D4AF37', color: '#000', border: '2px solid #b8960f' }}
+                >
+                  WINNER CERTS 🏆
+                </button>
+                <button
                   onClick={() => navigate('/')}
                   className="brutal-btn brutal-btn-cyan"
                   style={{ padding: '6px 12px', fontSize: '11px', boxShadow: '2px 2px 0px #000' }}
