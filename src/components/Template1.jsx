@@ -11,21 +11,21 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         width: '100%',
         height: '100%',
         backgroundColor: '#c0dfac',
-        padding: 'clamp(6px, 1vw, 14px)',
+        padding: '14px',
         boxSizing: 'border-box',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      <div style={{ backgroundColor: '#969e46', padding: 'clamp(2px, 0.3vw, 4px)', height: '100%', boxSizing: 'border-box' }}>
-        <div style={{ backgroundColor: '#e6eecd', padding: 'clamp(6px, 1vw, 14px)', height: '100%', boxSizing: 'border-box' }}>
+      <div style={{ backgroundColor: '#969e46', padding: '4px', height: '100%', boxSizing: 'border-box' }}>
+        <div style={{ backgroundColor: '#e6eecd', padding: '14px', height: '100%', boxSizing: 'border-box' }}>
           <div
             style={{
               backgroundColor: '#fbfdf8',
               height: '100%',
               width: '100%',
               boxSizing: 'border-box',
-              padding: 'clamp(10px, 2vw, 28px) clamp(14px, 3vw, 50px)',
+              padding: '28px 50px',
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
@@ -39,9 +39,9 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
               left: '8px',
               right: '8px',
               height: '10%',
-              borderTop: 'clamp(1px, 0.3vw, 3px) solid #c81b7e',
-              borderLeft: 'clamp(1px, 0.3vw, 3px) solid #c81b7e',
-              borderRight: 'clamp(1px, 0.3vw, 3px) solid #c81b7e',
+              borderTop: '3px solid #c81b7e',
+              borderLeft: '3px solid #c81b7e',
+              borderRight: '3px solid #c81b7e',
               pointerEvents: 'none',
               zIndex: 0,
             }} />
@@ -52,7 +52,7 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
               top: 'calc(10% + 20px)',
               bottom: 'calc(10% + 20px)',
               left: '8px',
-              width: 'clamp(1px, 0.3vw, 3px)',
+              width: '3px',
               display: 'flex',
               flexDirection: 'column',
               gap: '15px',
@@ -70,7 +70,7 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
               top: 'calc(10% + 20px)',
               bottom: 'calc(10% + 20px)',
               right: '8px',
-              width: 'clamp(1px, 0.3vw, 3px)',
+              width: '3px',
               display: 'flex',
               flexDirection: 'column',
               gap: '15px',
@@ -89,9 +89,9 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
               left: '8px',
               right: '8px',
               height: '10%',
-              borderBottom: 'clamp(1px, 0.3vw, 3px) solid #8fa747',
-              borderLeft: 'clamp(1px, 0.3vw, 3px) solid #8fa747',
-              borderRight: 'clamp(1px, 0.3vw, 3px) solid #8fa747',
+              borderBottom: '3px solid #8fa747',
+              borderLeft: '3px solid #8fa747',
+              borderRight: '3px solid #8fa747',
               pointerEvents: 'none',
               zIndex: 0,
             }} />
@@ -114,27 +114,27 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         }} />
 
         {/* Header with logos */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: 'clamp(8px, 1.5vw, 18px)', position: 'relative', zIndex: 1 }}>
-          <div style={{ height: 'clamp(52px, 8vw, 95px)', width: 'clamp(52px, 8vw, 95px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '18px', position: 'relative', zIndex: 1 }}>
+          <div style={{ height: '95px', width: '95px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <img src={logoImage} alt="BVV Sangha Logo" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
 
           <div style={{ textAlign: 'center', color: '#8b9d44', flex: 1 }}>
-            <p style={{ margin: 0, fontFamily: 'sans-serif', fontSize: 'clamp(10px, 1.3vw, 18px)', fontWeight: 800, letterSpacing: '0.1em' }}>
+            <p style={{ margin: 0, fontFamily: 'sans-serif', fontSize: '18px', fontWeight: 800, letterSpacing: '0.1em' }}>
               B.V.V SANGHA'S
             </p>
-            <p style={{ margin: '4px 0 0', fontFamily: 'sans-serif', fontSize: 'clamp(10px, 1.5vw, 20px)', fontWeight: 800, letterSpacing: '0.02em', lineHeight: '1.2' }}>
+            <p style={{ margin: '4px 0 0', fontFamily: 'sans-serif', fontSize: '20px', fontWeight: 800, letterSpacing: '0.02em', lineHeight: '1.2' }}>
               BILURU GURUBASAV MAHASWAMIJI INSTITUTE OF TECHNOLOGY, MUDHOL
             </p>
           </div>
 
-          <div style={{ height: 'clamp(52px, 8vw, 95px)', width: 'clamp(52px, 8vw, 95px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ height: '95px', width: '95px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <img src={swamiImage} alt="Swamiji" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
         </div>
 
         {/* Decorative divider */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'clamp(6px, 1vw, 12px) 0', position: 'relative', zIndex: 1, gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '12px 0', position: 'relative', zIndex: 1, gap: '4px' }}>
           {/* Left dots */}
           <div style={{ width: '2px', height: '2px', borderRadius: '50%', backgroundColor: '#8b9d44' }}></div>
           <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#8b9d44' }}></div>
@@ -153,18 +153,18 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         {/* Event title */}
         <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
           {eventName && eventName.toLowerCase() !== 'techathon 1.0' && eventName.toLowerCase() !== 'techathon1.0' ? (
-            <h1 style={{ margin: '0 auto', fontSize: 'clamp(32px, 5vw, 65px)', color: '#000', textTransform: 'uppercase', fontFamily: 'sans-serif', fontWeight: 900 }}>{eventName}</h1>
+            <h1 style={{ margin: '0 auto', fontSize: '65px', color: '#000', textTransform: 'uppercase', fontFamily: 'sans-serif', fontWeight: 900 }}>{eventName}</h1>
           ) : (
             <img
               src={techathonFontImage}
               alt="Techathon 1.0"
-              style={{ height: 'clamp(42px, 6.5vw, 75px)', margin: '0 auto', objectFit: 'contain' }}
+              style={{ height: '75px', margin: '0 auto', objectFit: 'contain' }}
             />
           )}
-          <p style={{ margin: '6px 0 0', color: '#e91e63', fontFamily: 'serif', fontSize: 'clamp(12px, 1.8vw, 24px)', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.1 }}>
+          <p style={{ margin: '6px 0 0', color: '#e91e63', fontFamily: 'serif', fontSize: '24px', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.1 }}>
             Certificate of Participation
           </p>
-          <p style={{ margin: '8px 0 0', fontSize: 'clamp(9px, 1.2vw, 16px)', color: '#000', fontFamily: '"Canva Sans", "Open Sans", sans-serif' }}>
+          <p style={{ margin: '8px 0 0', fontSize: '16px', color: '#000', fontFamily: '"Canva Sans", "Open Sans", sans-serif' }}>
             This is to certify that
           </p>
         </div>
@@ -173,7 +173,7 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         <div
           style={{
             width: '74%',
-            margin: 'clamp(6px, 1vw, 14px) auto 0',
+            margin: '14px auto 0',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1,
@@ -182,7 +182,7 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
           <div
             style={{
               fontFamily: '"KrinahFont"',
-              fontSize: 'clamp(22px, 3.2vw, 40px)',
+              fontSize: '40px',
               textTransform: 'capitalize',
               color: '#000',
               lineHeight: 1,
@@ -196,7 +196,7 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Event description */}
-        <div style={{ marginTop: 'clamp(6px, 1vw, 14px)', textAlign: 'center', fontSize: 'clamp(9px, 1.2vw, 16px)', lineHeight: '1.5', color: '#000', padding: '0 clamp(10px, 3vw, 40px)', position: 'relative', zIndex: 1, fontFamily: '"Canva Sans", "Open Sans", sans-serif' }}>
+        <div style={{ marginTop: '14px', textAlign: 'center', fontSize: '16px', lineHeight: '1.5', color: '#000', padding: '0 40px', position: 'relative', zIndex: 1, fontFamily: '"Canva Sans", "Open Sans", sans-serif' }}>
           <p style={{ margin: 0 }}>
             has participated in the <strong>24-Hour hackathon</strong>, held {certificateDate ? `on ${certificateDate}` : 'on 30th April 2026'}.
           </p>
@@ -206,37 +206,37 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Signatories */}
-        <div style={{ marginTop: 'auto', marginBottom: 'clamp(25px, 4vw, 50px)', display: 'flex', justifyContent: 'space-between', color: '#8b9d44', textAlign: 'center', gap: '10px', position: 'relative', zIndex: 1 }}>
+        <div style={{ marginTop: 'auto', marginBottom: '50px', display: 'flex', justifyContent: 'space-between', color: '#8b9d44', textAlign: 'center', gap: '10px', position: 'relative', zIndex: 1 }}>
           <div style={{ width: '30%' }}>
-            <p style={{ margin: 0, fontWeight: 700, fontSize: 'clamp(7px, 1vw, 14px)', lineHeight: 1.15 }}>PROF. VARUN SARVADE</p>
-            <p style={{ margin: '2px 0 0', fontSize: 'clamp(6px, 0.8vw, 11px)' }}>(HOD, CSE, BGMIT)</p>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: '14px', lineHeight: 1.15 }}>PROF. VARUN SARVADE</p>
+            <p style={{ margin: '2px 0 0', fontSize: '11px' }}>(HOD, CSE, BGMIT)</p>
           </div>
           <div style={{ width: '30%' }}>
-            <p style={{ margin: 0, fontWeight: 700, fontSize: 'clamp(7px, 1vw, 14px)', lineHeight: 1.15 }}>PROF. TBA</p>
-            <p style={{ margin: '2px 0 0', fontSize: 'clamp(6px, 0.8vw, 11px)' }}>(EVENT COORDINATOR)</p>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: '14px', lineHeight: 1.15 }}>PROF. TBA</p>
+            <p style={{ margin: '2px 0 0', fontSize: '11px' }}>(EVENT COORDINATOR)</p>
           </div>
           <div style={{ width: '30%' }}>
-            <p style={{ margin: 0, fontWeight: 700, fontSize: 'clamp(7px, 1vw, 14px)', lineHeight: 1.15 }}>DR. SHRAVANKUMAR KERUR</p>
-            <p style={{ margin: '2px 0 0', fontSize: 'clamp(6px, 0.8vw, 11px)' }}>(PRINCIPAL, BGMIT)</p>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: '14px', lineHeight: 1.15 }}>DR. SHRAVANKUMAR KERUR</p>
+            <p style={{ margin: '2px 0 0', fontSize: '11px' }}>(PRINCIPAL, BGMIT)</p>
           </div>
         </div>
 
         {/* QR Code - BOTTOM LEFT */}
         <div style={{
           position: 'absolute',
-          bottom: 'clamp(10px, 1.8vw, 20px)',
-          left: 'clamp(10px, 2vw, 25px)',
+          bottom: '20px',
+          left: '25px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 'clamp(2px, 0.3vw, 4px)',
+          gap: '4px',
           zIndex: 1,
         }}>
           <div>
             {qrCodeUrl ? (
-              <img src={qrCodeUrl} alt="QR" style={{ width: 'clamp(34px, 4.5vw, 55px)', height: 'clamp(34px, 4.5vw, 55px)', border: '1px solid #000' }} />
+              <img src={qrCodeUrl} alt="QR" style={{ width: '55px', height: '55px', border: '1px solid #000' }} />
             ) : (
-              <div style={{ width: 'clamp(34px, 4.5vw, 55px)', height: 'clamp(34px, 4.5vw, 55px)', border: '1px solid #000', background: '#f0f0f0' }} />
+              <div style={{ width: '55px', height: '55px', border: '1px solid #000', background: '#f0f0f0' }} />
             )}
           </div>
         </div>
@@ -244,11 +244,11 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         {/* Certificate ID - BOTTOM RIGHT */}
         <div style={{
           position: 'absolute',
-          bottom: 'clamp(10px, 1.8vw, 20px)',
-          right: 'clamp(10px, 2vw, 25px)',
+          bottom: '20px',
+          right: '25px',
           zIndex: 1,
         }}>
-          <p style={{ margin: 0, color: '#e91e63', fontWeight: 700, fontSize: 'clamp(5px, 0.75vw, 9px)', textAlign: 'right', lineHeight: 1.2 }}>
+          <p style={{ margin: 0, color: '#e91e63', fontWeight: 700, fontSize: '9px', textAlign: 'right', lineHeight: 1.2 }}>
             CERT ID: {certificateId || 'BGMIT-TECH-001'}
           </p>
         </div>
@@ -256,11 +256,11 @@ const Template1 = ({ participantName, eventName, certificateDate, certificateId,
         {/* Bottom bar */}
         <div style={{
           position: 'absolute',
-          bottom: 'clamp(4px, 0.6vw, 8px)',
+          bottom: '8px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: 'clamp(120px, 22vw, 250px)',
-          height: 'clamp(3px, 0.6vw, 6px)',
+          width: '250px',
+          height: '6px',
           backgroundColor: '#8b9d44'
         }}></div>
 

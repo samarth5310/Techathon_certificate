@@ -4,11 +4,11 @@ import swamiImage from '../../code/swami.png';
 
 const Template3 = ({ participantName, eventName, certificateDate, certificateId, qrCodeUrl }) => {
   const nameLen = (participantName || 'Participant Name').length;
-  let nameFontSize = 'clamp(20px, 3.2vw, 38px)';
+  let nameFontSize = '38px';
   if (nameLen > 25) {
-    nameFontSize = 'clamp(14px, 2.2vw, 24px)';
+    nameFontSize = '24px';
   } else if (nameLen > 18) {
-    nameFontSize = 'clamp(16px, 2.8vw, 30px)';
+    nameFontSize = '30px';
   }
 
   return (
@@ -16,7 +16,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
       width: '100%',
       height: '100%',
       background: '#7F1D1D',
-      padding: 'clamp(20px, 3vw, 36px)',
+      padding: '36px',
       boxSizing: 'border-box',
       fontFamily: "'Georgia', 'Times New Roman', serif",
     }}>
@@ -24,9 +24,9 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
       <div style={{
         width: '100%',
         height: '100%',
-        border: 'clamp(6px, 1vw, 12px) solid #D4AF37',
+        border: '12px solid #D4AF37',
         boxSizing: 'border-box',
-        padding: 'clamp(8px, 1.2vw, 16px)',
+        padding: '16px',
       }}>
         {/* White content area */}
         <div style={{
@@ -34,7 +34,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
           height: '100%',
           background: '#FFFDF7',
           boxSizing: 'border-box',
-          padding: 'clamp(14px, 2.2vw, 28px) clamp(24px, 4vw, 55px)',
+          padding: '28px 55px',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
@@ -50,7 +50,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             pointerEvents: 'none',
             zIndex: 0,
           }}>
-            <img src={logoImage} alt="" style={{ width: 'clamp(200px, 25vw, 300px)', height: 'clamp(200px, 25vw, 300px)', objectFit: 'contain' }} />
+            <img src={logoImage} alt="" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
           </div>
 
           {/* Header with logos and college name */}
@@ -58,19 +58,19 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 'clamp(14px, 2.5vw, 30px)',
+            gap: '30px',
             position: 'relative',
             zIndex: 1,
           }}>
             <img src={logoImage} alt="BVV Sangha Logo" style={{
-              width: 'clamp(48px, 6.5vw, 70px)',
-              height: 'clamp(58px, 8vw, 85px)',
+              width: '70px',
+              height: '85px',
               objectFit: 'contain',
             }} />
             <div style={{ textAlign: 'center', flex: 1 }}>
               <p style={{
                 margin: 0,
-                fontSize: 'clamp(11px, 1.4vw, 16px)',
+                fontSize: '16px',
                 fontWeight: 700,
                 letterSpacing: '0.15em',
                 color: '#7F1D1D',
@@ -80,7 +80,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
               </p>
               <p style={{
                 margin: '3px 0 0',
-                fontSize: 'clamp(12px, 1.7vw, 20px)',
+                fontSize: '20px',
                 fontWeight: 700,
                 color: '#7F1D1D',
                 textTransform: 'uppercase',
@@ -91,22 +91,22 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
               </p>
             </div>
             <img src={swamiImage} alt="Gurubasava Swamiji" style={{
-              width: 'clamp(48px, 6.5vw, 70px)',
-              height: 'clamp(58px, 8vw, 85px)',
+              width: '70px',
+              height: '85px',
               objectFit: 'contain',
             }} />
           </div>
 
           {/* Blue ribbon banner */}
           <div style={{
-            margin: 'clamp(10px, 1.5vw, 18px) auto',
+            margin: '18px auto',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1,
           }}>
             <div style={{
               background: '#991B1B',
-              padding: 'clamp(7px, 1vw, 12px) clamp(30px, 5vw, 70px)',
+              padding: '12px 70px',
               position: 'relative',
               display: 'inline-block',
             }}>
@@ -135,7 +135,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
               <p style={{
                 margin: 0,
                 color: '#ffffff',
-                fontSize: 'clamp(11px, 1.5vw, 18px)',
+                fontSize: '18px',
                 fontWeight: 700,
                 letterSpacing: '0.25em',
                 textTransform: 'uppercase',
@@ -155,16 +155,16 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             width: '100%',
             position: 'relative',
             zIndex: 1,
-            marginBottom: 'clamp(20px, 4vw, 50px)', // Pushes text slightly upwards
+            marginBottom: '50px', // Pushes text slightly upwards
           }}>
             {/* THIS IS TO CERTIFY THAT */}
           <p style={{
             textAlign: 'center',
-            fontSize: 'clamp(10px, 1.2vw, 14px)',
+            fontSize: '14px',
             fontWeight: 700,
             color: '#333',
             letterSpacing: '0.08em',
-            margin: '0 0 clamp(8px, 1.5vw, 16px) 0',
+            margin: '0 0 16px 0',
             position: 'relative',
             zIndex: 1,
           }}>
@@ -174,7 +174,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
           {/* Participant Name */}
           <div style={{
             textAlign: 'center',
-            margin: '0 auto clamp(12px, 2vw, 24px)',
+            margin: '0 auto 24px',
             width: '100%',
             position: 'relative',
             zIndex: 1,
@@ -196,7 +196,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
           {/* Certificate body text */}
           <div style={{
             textAlign: 'center',
-            fontSize: 'clamp(9px, 1.2vw, 14px)',
+            fontSize: '14px',
             lineHeight: 1.6,
             color: '#333',
             margin: '0 auto',
@@ -217,14 +217,14 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            margin: '0 0 clamp(16px, 2.5vw, 30px)',
+            margin: '0 0 30px',
             position: 'relative',
             zIndex: 1,
           }}>
-            <p style={{ margin: 0, fontSize: 'clamp(9px, 1.1vw, 13px)', color: '#333' }}>
+            <p style={{ margin: 0, fontSize: '13px', color: '#333' }}>
               <strong>Date:</strong> 01 May 2026
             </p>
-            <p style={{ margin: 0, fontSize: 'clamp(9px, 1.1vw, 13px)', color: '#333' }}>
+            <p style={{ margin: 0, fontSize: '13px', color: '#333' }}>
               <strong>Place:</strong> Mudhol
             </p>
           </div>
@@ -237,7 +237,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             gap: '8px',
             position: 'relative',
             zIndex: 1,
-            marginBottom: 'clamp(28px, 4vw, 45px)',
+            marginBottom: '45px',
           }}>
             {[
               { name: 'Prof. Faculty Name', role: 'Faculty Coordinator' },
@@ -251,11 +251,11 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
                   margin: '0 auto',
                   borderBottom: '1.5px solid #333',
                   marginBottom: '4px',
-                  height: 'clamp(22px, 3.2vw, 38px)',
+                  height: '38px',
                 }} />
                 <p style={{
                   margin: 0,
-                  fontSize: 'clamp(7px, 0.85vw, 11px)',
+                  fontSize: '11px',
                   fontWeight: 700,
                   color: '#7F1D1D',
                   lineHeight: 1.3,
@@ -264,7 +264,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
                 </p>
                 <p style={{
                   margin: '2px 0 0',
-                  fontSize: 'clamp(6px, 0.75vw, 9px)',
+                  fontSize: '9px',
                   color: '#555',
                   lineHeight: 1.2,
                 }}>
@@ -277,20 +277,20 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
           {/* QR Code - bottom left, below signatures */}
           <div style={{
             position: 'absolute',
-            bottom: 'clamp(8px, 1.2vw, 14px)',
-            left: 'clamp(24px, 4vw, 55px)',
+            bottom: '14px',
+            left: '55px',
             zIndex: 2,
           }}>
             {qrCodeUrl ? (
               <img src={qrCodeUrl} alt="QR Code" style={{
-                width: 'clamp(36px, 4.5vw, 55px)',
-                height: 'clamp(36px, 4.5vw, 55px)',
+                width: '55px',
+                height: '55px',
                 border: '1px solid #ccc',
               }} />
             ) : (
               <div style={{
-                width: 'clamp(36px, 4.5vw, 55px)',
-                height: 'clamp(36px, 4.5vw, 55px)',
+                width: '55px',
+                height: '55px',
                 border: '1px solid #ccc',
                 background: '#f9f9f9',
               }} />
@@ -300,14 +300,14 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
           {/* Certificate ID - bottom right, below signatures */}
           <div style={{
             position: 'absolute',
-            bottom: 'clamp(8px, 1.2vw, 14px)',
-            right: 'clamp(24px, 4vw, 55px)',
+            bottom: '14px',
+            right: '55px',
             zIndex: 2,
             textAlign: 'right',
           }}>
             <p style={{
               margin: 0,
-              fontSize: 'clamp(7px, 0.8vw, 10px)',
+              fontSize: '10px',
               color: '#666',
               fontFamily: "'Courier New', monospace",
             }}>
@@ -315,7 +315,7 @@ const Template3 = ({ participantName, eventName, certificateDate, certificateId,
             </p>
             <p style={{
               margin: '2px 0 0',
-              fontSize: 'clamp(7px, 0.8vw, 10px)',
+              fontSize: '10px',
               color: '#7F1D1D',
               fontWeight: 700,
               fontFamily: "'Courier New', monospace",
