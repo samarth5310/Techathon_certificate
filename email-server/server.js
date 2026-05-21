@@ -33,7 +33,7 @@ function buildRoboraceEmail(participantName, certificateId) {
             
             <p style="margin-bottom: 18px; color: #E5E7EB;">Dear <strong style="color: #FF6B35;">${participantName}</strong>,</p>
             
-            <p style="margin-bottom: 18px; color: #D1D5DB;">Greetings from the Department of CSE & AIML, BGMIT Mudhol! 🤖</p>
+            <p style="margin-bottom: 18px; color: #D1D5DB;">Greetings from the Dept of Electronics and Communication, BGMIT Mudhol! 🤖</p>
             
             <p style="margin-bottom: 18px; color: #D1D5DB;">Congratulations on successfully participating in <strong style="color: #E63946;">Roborace</strong> — our thrilling robotics racing competition! Your engineering skills, teamwork, and competitive spirit on the track were truly impressive. We are delighted to share your official digital Certificate of Participation, attached as a PDF for your records and future reference.</p>
 
@@ -53,8 +53,7 @@ function buildRoboraceEmail(participantName, certificateId) {
             <!-- Footer -->
             <p style="margin-bottom: 5px; color: #E5E7EB;">Best Regards,</p>
             <p style="margin-top: 0; color: #9CA3AF; font-size: 13px;">
-              <strong style="color: #E5E7EB;">BGMIT Innovation Council</strong><br/>
-              Department of CSE & AIML<br/>
+              <strong style="color: #E5E7EB;">Dept of Electronics and Communication</strong><br/>
               Biluru Gurubasava Mahaswamiji Institute of Technology, Mudhol
             </p>
           </div>
