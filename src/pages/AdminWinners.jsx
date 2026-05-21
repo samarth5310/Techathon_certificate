@@ -12,7 +12,8 @@ import Papa from 'papaparse'
 
 const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/send-certificate-email'
 
-const PRIZE_LABELS = { 1: '🥇 FIRST PRIZE — ₹15,000', 2: '🥈 SECOND PRIZE — ₹10,000', 3: '🥉 THIRD PRIZE — ₹5,000' }
+const PRIZE_LABELS_TECHATHON = { 1: '🥇 FIRST PRIZE — ₹15,000', 2: '🥈 SECOND PRIZE — ₹10,000', 3: '🥉 THIRD PRIZE — ₹5,000' }
+const PRIZE_LABELS_ROBORACE = { 1: '🥇 FIRST PLACE — Gold Badge', 2: '🥈 SECOND PLACE — Silver Badge', 3: '🥉 THIRD PLACE — Bronze Badge' }
 const PRIZE_COLORS = { 1: '#D4AF37', 2: '#C0C0C0', 3: '#CD7F32' }
 
 const AdminWinners = () => {
@@ -26,6 +27,55 @@ const AdminWinners = () => {
   const [progress, setProgress] = useState({ current: 0, total: 0, success: 0, failed: 0 })
   const [logs, setLogs] = useState([])
   const [message, setMessage] = useState('')
+  const [downloadingPreview, setDownloadingPreview] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState('techathon') // 'techathon' or 'roborace'
+
+  const isRoborace = selectedEvent === 'roborace'
+  const currentEventName = isRoborace ? 'RoboRace' : 'TECHATHON 1.0'
+  const currentEventDate = isRoborace ? '29 April 2026' : '01 May 2026'
+  const PRIZE_LABELS = isRoborace ? PRIZE_LABELS_ROBORACE : PRIZE_LABELS_TECHATHON
+
+  const downloadPreview = async (prizeTier) => {
+    setDownloadingPreview(true)
+    setMessage('')
+    try {
+      const dummyQr = await generateQRCodeDataUrl(parseQueryDomain())
+      
+      const pdf = await buildWinnerPdf({
+        participantName: 'Preview Winner',
+        teamName: 'Preview Team',
+        certificateId: `PREVIEW-WINNER-00${prizeTier}`,
+        eventName: currentEventName,
+        eventDate: currentEventDate,
+        prizePosition: prizeTier,
+        qrCodeUrl: dummyQr,
+        logoSrc: logoImage,
+        swamiSrc: swamiImage,
+        principalSignSrc: principalSignImage,
+      })
+
+      pdf.save(`Template_Winner_Prize_${prizeTier}.pdf`)
+      setMessage(`>> Prize ${prizeTier} template downloaded successfully`)
+    } catch (error) {
+      setMessage(`// ERROR: Download failed - ${error.message}`)
+    } finally {
+      setDownloadingPreview(false)
+    }
+  }
+
+  const downloadCsvTemplate = () => {
+    const csvContent = "name,email,teamName,prize\nJohn Doe,john@example.com,Team Alpha,1\nJane Smith,jane@example.com,Team Beta,2\nBob Wilson,bob@example.com,Team Gamma,3\n"
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', 'winner_upload_template.csv')
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    setMessage('>> CSV Template downloaded successfully')
+  }
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -118,8 +168,8 @@ const AdminWinners = () => {
         participantName: winner.name,
         teamName: winner.teamName,
         certificateId: certId,
-        eventName: 'TECHATHON 1.0',
-        eventDate: '01 May 2026',
+        eventName: currentEventName,
+        eventDate: currentEventDate,
         prizePosition: winner.prize,
         qrCodeUrl: qrUrl,
         logoSrc: logoImage,
@@ -159,8 +209,8 @@ const AdminWinners = () => {
           participantName: w.name,
           teamName: w.teamName,
           certificateId: certId,
-          eventName: 'TECHATHON 1.0',
-          eventDate: '01 May 2026',
+          eventName: currentEventName,
+          eventDate: currentEventDate,
           prizePosition: w.prize,
           qrCodeUrl: qrUrl,
           logoSrc: logoImage,
@@ -180,7 +230,7 @@ const AdminWinners = () => {
             participantEmail: w.email,
             certificateId: certId,
             fileName,
-            eventName: 'TECHATHON 1.0',
+            eventName: currentEventName,
             pdfBase64: base64Pdf,
           })
         })
@@ -188,7 +238,7 @@ const AdminWinners = () => {
         if (!res.ok) throw new Error('Email server rejected request')
 
         // 4. Mark as winner in Firestore
-        const safeEventName = 'techathon1.0'
+        const safeEventName = isRoborace ? 'roborace' : 'techathon1.0'
         const docId = `${w.email.trim()}_${safeEventName}`
         const participantDoc = doc(db, 'participants', docId)
         await setDoc(participantDoc, {
@@ -235,8 +285,8 @@ const AdminWinners = () => {
       {/* ═══ TICKER ═══ */}
       <div className="brutal-ticker">
         <div className="brutal-ticker-inner">
-          {'WINNER CERTIFICATES ░░ TECHATHON 1.0 ░░ GOLD · SILVER · BRONZE ░░ '}
-          {'WINNER CERTIFICATES ░░ TECHATHON 1.0 ░░ GOLD · SILVER · BRONZE ░░ '}
+          {'WINNER CERTIFICATES ░░ ' + currentEventName.toUpperCase() + ' ░░ GOLD · SILVER · BRONZE ░░ '}
+          {'WINNER CERTIFICATES ░░ ' + currentEventName.toUpperCase() + ' ░░ GOLD · SILVER · BRONZE ░░ '}
         </div>
       </div>
 
@@ -257,7 +307,43 @@ const AdminWinners = () => {
                   // Upload winner CSV → Preview → Send certificates with medal badges
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* Event Selector */}
+                <div style={{ display: 'flex', border: '2px solid var(--border-brutal)', marginRight: '4px' }}>
+                  <button
+                    onClick={() => setSelectedEvent('techathon')}
+                    className="mono"
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      background: selectedEvent === 'techathon' ? '#3730A3' : 'var(--bg-card-inner)',
+                      color: selectedEvent === 'techathon' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    TECHATHON 1.0
+                  </button>
+                  <button
+                    onClick={() => setSelectedEvent('roborace')}
+                    className="mono"
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      borderLeft: '2px solid var(--border-brutal)',
+                      background: selectedEvent === 'roborace' ? '#E63946' : 'var(--bg-card-inner)',
+                      color: selectedEvent === 'roborace' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    ROBORACE
+                  </button>
+                </div>
                 <Link to="/admin" className="brutal-btn brutal-btn-cyan" style={{ padding: '6px 12px', fontSize: '11px', boxShadow: '2px 2px 0px #000', textDecoration: 'none' }}>
                   ← ADMIN
                 </Link>
@@ -279,21 +365,31 @@ const AdminWinners = () => {
 
             <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>
               // CSV columns: <strong style={{ color: 'var(--accent-cyan)' }}>name, email, teamName, prize</strong><br />
-              // prize = 1 (₹15,000 Gold), 2 (₹10,000 Silver), 3 (₹5,000 Bronze)
+              // prize = 1 ({isRoborace ? 'Gold Badge' : '₹15,000 Gold'}), 2 ({isRoborace ? 'Silver Badge' : '₹10,000 Silver'}), 3 ({isRoborace ? 'Bronze Badge' : '₹5,000 Bronze'})
             </p>
 
-            <label style={{ display: 'inline-block', cursor: 'pointer' }}>
-              <span className="brutal-btn brutal-btn-yellow" style={{ display: 'inline-flex' }}>
-                CHOOSE CSV FILE ↑
-              </span>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleCSVUpload}
-                disabled={sending}
-                style={{ display: 'none' }}
-              />
-            </label>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <label style={{ display: 'inline-block', cursor: 'pointer' }}>
+                <span className="brutal-btn brutal-btn-yellow" style={{ display: 'inline-flex' }}>
+                  CHOOSE CSV FILE ↑
+                </span>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleCSVUpload}
+                  disabled={sending}
+                  style={{ display: 'none' }}
+                />
+              </label>
+
+              <button
+                onClick={downloadCsvTemplate}
+                className="brutal-btn"
+                style={{ padding: '6px 12px', fontSize: '11px' }}
+              >
+                DOWNLOAD CSV TEMPLATE ↓
+              </button>
+            </div>
 
             {message && (
               <div
@@ -303,6 +399,47 @@ const AdminWinners = () => {
                 {message}
               </div>
             )}
+          </div>
+
+          {/* ═══ TEMPLATE PREVIEWS ═══ */}
+          <div className="brutal-card section-gap" style={{ padding: '28px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ width: '4px', height: '24px', background: 'var(--accent-cyan)', flexShrink: 0 }}></div>
+              <h2 className="brutal-heading" style={{ fontSize: '15px', color: 'var(--accent-cyan)' }}>
+                ▸ TEMPLATE PREVIEWS
+              </h2>
+            </div>
+
+            <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>
+              // Generate and download preview PDFs for the 1st, 2nd, and 3rd prize certificates.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => downloadPreview(1)}
+                disabled={downloadingPreview}
+                className="brutal-btn"
+                style={{ background: '#D4AF37', color: '#000', border: '2px solid #b8960f' }}
+              >
+                {downloadingPreview ? '[ WAIT... ]' : '1ST PRIZE TEMPLATE ↓'}
+              </button>
+              <button
+                onClick={() => downloadPreview(2)}
+                disabled={downloadingPreview}
+                className="brutal-btn"
+                style={{ background: '#C0C0C0', color: '#000', border: '2px solid #a0a0a0' }}
+              >
+                {downloadingPreview ? '[ WAIT... ]' : '2ND PRIZE TEMPLATE ↓'}
+              </button>
+              <button
+                onClick={() => downloadPreview(3)}
+                disabled={downloadingPreview}
+                className="brutal-btn"
+                style={{ background: '#CD7F32', color: '#000', border: '2px solid #a66629' }}
+              >
+                {downloadingPreview ? '[ WAIT... ]' : '3RD PRIZE TEMPLATE ↓'}
+              </button>
+            </div>
           </div>
 
           {/* ═══ WINNERS TABLE ═══ */}

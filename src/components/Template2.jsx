@@ -169,15 +169,29 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         <div style={{ position: 'absolute', top: mm(90), width: '100%', textAlign: 'center', zIndex: 1 }}>
-          <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(230) }}>
-            has actively participated in the <strong>24-Hour Hackathon TECHATHON 1.0</strong>, conducted from April 30th to May 1st, 2026. The event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm, creativity, and a steadfast commitment to innovation.
-          </p>
+          {(eventName || '').toLowerCase().includes('roborace') ? (
+            <>
+              <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(260) }}>
+                has actively participated in the <strong>RoboRace</strong>, on 29th April 2026. The event was organized by BGMIT, Mudhol.
+              </p>
+              <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(220) }}>
+                Throughout the competition, the participant demonstrated exceptional enthusiasm,
+              </p>
+              <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(170) }}>
+                creativity, and a steadfast commitment to innovation.
+              </p>
+            </>
+          ) : (
+            <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(230) }}>
+              has actively participated in the <strong>24-Hour Hackathon TECHATHON 1.0</strong>, conducted from April 30th to May 1st, 2026. The event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm, creativity, and a steadfast commitment to innovation.
+            </p>
+          )}
         </div>
 
         {/* Date and Place */}
         <div style={{ position: 'absolute', top: mm(129), left: mm(12), zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(4.23), color: '#333' }}>
-            <strong>Date:</strong> 01 May 2026
+            <strong>Date:</strong> {(eventName || '').toLowerCase().includes('roborace') ? '29 April 2026' : '01 May 2026'}
           </p>
         </div>
         <div style={{ position: 'absolute', top: mm(129), right: mm(12), zIndex: 1 }}>

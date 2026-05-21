@@ -14,10 +14,10 @@ function loadImage(src) {
     img.onload = () => {
       const isSvg = src.includes('.svg') || src.startsWith('data:image/svg+xml');
       const scale = isSvg ? 8 : 1;
-      
+
       let w = img.naturalWidth * scale
       let h = img.naturalHeight * scale
-      
+
       const MAX_DIM = 800
       if (w > MAX_DIM || h > MAX_DIM) {
         if (w > h) { h = (MAX_DIM / w) * h; w = MAX_DIM }
@@ -41,29 +41,32 @@ const PRIZE_CONFIG = {
   1: {
     label: 'FIRST PRIZE',
     ordinal: '1st',
-    amount: '₹15,000',
+    amount: 'Rs. 15,000/-',
     badge: [212, 175, 55],     // Gold #D4AF37
     badgeDark: [170, 140, 44], // Darker gold
     badgeLight: [240, 220, 130], // Lighter gold
-    ribbonColor: [180, 50, 50],
+    ribbonColor: [180, 30, 30],
+    positionTitle: 'First Place',
   },
   2: {
     label: 'SECOND PRIZE',
     ordinal: '2nd',
-    amount: '₹10,000',
+    amount: 'Rs. 10,000/-',
     badge: [192, 192, 192],     // Silver
     badgeDark: [140, 140, 140],
     badgeLight: [230, 230, 235],
-    ribbonColor: [70, 70, 130],
+    ribbonColor: [180, 30, 30],
+    positionTitle: 'Second Place',
   },
   3: {
     label: 'THIRD PRIZE',
     ordinal: '3rd',
-    amount: '₹5,000',
+    amount: 'Rs. 5,000/-',
     badge: [205, 127, 50],     // Bronze #CD7F32
     badgeDark: [160, 100, 40],
     badgeLight: [230, 180, 100],
-    ribbonColor: [100, 50, 30],
+    ribbonColor: [180, 30, 30],
+    positionTitle: 'Third Place',
   },
 }
 
@@ -74,22 +77,17 @@ function drawMedal(pdf, cx, cy, prizeNum) {
   const cfg = PRIZE_CONFIG[prizeNum] || PRIZE_CONFIG[1]
   const radius = 12
 
-  // Ribbon tails behind the medal
-  pdf.setFillColor(...cfg.ribbonColor)
-  // Left ribbon
-  pdf.triangle(
-    cx - 6, cy + radius - 2,
-    cx - 10, cy + radius + 16,
-    cx - 2, cy + radius + 12,
-    'F'
-  )
-  // Right ribbon
-  pdf.triangle(
-    cx + 6, cy + radius - 2,
-    cx + 10, cy + radius + 16,
-    cx + 2, cy + radius + 12,
-    'F'
-  )
+  // Ribbon tie (red) behind the medal
+  const tieW = 16
+  const tieH = 30
+  pdf.setFillColor(...cfg.ribbonColor) // Red tie
+  // Draw the tie as a single polygon path to avoid rendering artifacts (thin lines)
+  pdf.lines([
+    [tieW, 0],
+    [0, tieH],
+    [-tieW / 2, -8],
+    [-tieW / 2, 8]
+  ], cx - tieW / 2, cy, [1, 1], 'F', true)
 
   // Outer ring (darker)
   pdf.setFillColor(...cfg.badgeDark)
@@ -121,11 +119,11 @@ function drawMedal(pdf, cx, cy, prizeNum) {
     pdf.triangle(cx, cy, points[i][0], points[i][1], next[0], next[1], 'F')
   }
 
-  // Ordinal text below medal
+  // Ordinal text inside or below the badge tie
   pdf.setFont('times', 'bold')
   pdf.setFontSize(10)
-  pdf.setTextColor(...cfg.badgeDark)
-  pdf.text(cfg.ordinal, cx, cy + radius + 20, { align: 'center' })
+  pdf.setTextColor(255, 255, 255) // White text on the red tie
+  pdf.text(cfg.ordinal, cx, cy + radius + 7, { align: 'center' })
 }
 
 /**
@@ -220,10 +218,10 @@ export async function buildWinnerPdf({
   // Diamond ornaments
   const dSize = 1.5
   pdf.setFillColor(...GOLD)
-  ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
-    pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
-    pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
-  })
+    ;[[cTLx, cTLy], [cTRx, cTRy], [cBLx, cBLy], [cBRx, cBRy]].forEach(([cx, cy]) => {
+      pdf.triangle(cx, cy - dSize, cx + dSize, cy, cx, cy + dSize, 'F')
+      pdf.triangle(cx, cy - dSize, cx - dSize, cy, cx, cy + dSize, 'F')
+    })
 
   // ═══ 5. HEADER: Logos + College Name ═══
   const logoH = 22
@@ -308,75 +306,132 @@ export async function buildWinnerPdf({
   const nameLen = displayName.length
   let nameFontPt = 28
   if (nameLen > 40) nameFontPt = 18
-  else if (nameLen > 30) nameFontPt = 20
-  else if (nameLen > 20) nameFontPt = 24
-
   const nameY = certifyY + 13
   pdf.setFont('times', 'bold')
-  pdf.setFontSize(nameFontPt)
+  pdf.setFontSize(28)
   pdf.setTextColor(...NAVY)
-  pdf.text(displayName, centerX, nameY, { align: 'center' })
+  pdf.text(participantName, centerX, nameY, { align: 'center' })
 
-  // Underline
-  const nameTextW = pdf.getTextWidth(displayName)
-  const underlineW = Math.max(nameTextW + 10, contentW * 0.6)
-  const underlineY = nameY + 3
+  // ═══ 9. TEAM NAME (Optional) ═══
+  const teamY = nameY + 6
+  if (teamName) {
+    pdf.setFontSize(16)
+    pdf.text(`(Team: ${teamName})`, centerX, teamY, { align: 'center' })
+  }
+
+  // ═══ 9.5 MEDAL BADGE (Left side, below logo & beside title) ═══
+  const medalCx = contentL + 10
+  const medalCy = 65 // Moved up to avoid collision with names
+  drawMedal(pdf, medalCx, medalCy, prizeNum)
+
+  const underlineY = (teamName ? teamY : nameY) + 3
+  const underlineW = Math.max(pdf.getTextWidth(participantName), teamName ? pdf.getTextWidth(`(Team: ${teamName})`) : 0) + 20
   pdf.setDrawColor(...GREY)
   pdf.setLineWidth(0.5)
   pdf.line(centerX - underlineW / 2, underlineY, centerX + underlineW / 2, underlineY)
 
-  // ═══ 10. MEDAL BADGE (left side) ═══
-  const medalCx = contentL + 20
-  const medalCy = underlineY + 22
-  drawMedal(pdf, medalCx, medalCy, prizeNum)
-
-  // ═══ 11. BODY TEXT (right of medal, custom per prize) ═══
-  pdf.setTextColor(...GREY)
-  const bodyStartX = medalCx + 28
-  const bodyMaxW = contentR - bodyStartX - 5
+  // ═══ 10. BODY TEXT (Centered, inverted pyramid) ═══
   const bodyY1 = underlineY + 10
-  const lineHeight = 6
+  const lineHeight = 5.5
+  const isRoborace = eventName?.toLowerCase().includes('roborace')
 
   pdf.setFont('times', 'normal')
   pdf.setFontSize(12)
 
-  // Line 1: "for securing FIRST PRIZE in TECHATHON 1.0 and demonstrating outstanding"
-  const l1p1 = 'for securing '
-  pdf.text(l1p1, bodyStartX, bodyY1)
-  const l1p1w = pdf.getTextWidth(l1p1)
-  pdf.setFont('times', 'bold')
-  pdf.setTextColor(...prize.badge)
-  pdf.text(prize.label, bodyStartX + l1p1w, bodyY1)
-  const l1p2w = pdf.getTextWidth(prize.label)
-  pdf.setFont('times', 'normal')
-  pdf.setTextColor(...GREY)
-  pdf.text(' in TECHATHON 1.0 and demonstrating outstanding', bodyStartX + l1p1w + l1p2w, bodyY1)
+  let bodyY3 // tracks last body line for layout below
 
-  // Line 2
-  const bodyY2 = bodyY1 + lineHeight
-  pdf.text('innovation, technical excellence, and problem-solving skills throughout', bodyStartX, bodyY2)
+  if (isRoborace) {
+    // ── ROBORACE: No cash prize, pyramid style (3 lines) ──
+    // LINE 1 (longest)
+    const l1p1 = 'has secured '
+    const l1p1w = pdf.getTextWidth(l1p1)
+    pdf.setFont('times', 'bold')
+    const l1p2 = prize.label
+    const l1p2w = pdf.getTextWidth(l1p2)
+    pdf.setFont('times', 'normal')
+    const l1p3 = ' in RoboRace, on 29th April 2026, for demonstrating outstanding innovation, technical excellence,'
+    const l1p3w = pdf.getTextWidth(l1p3)
 
-  // Line 3
-  const bodyY3 = bodyY2 + lineHeight
-  pdf.text('the competition. In recognition of this remarkable achievement, the', bodyStartX, bodyY3)
+    const totalW1 = l1p1w + l1p2w + l1p3w
+    let startX1 = centerX - totalW1 / 2
 
-  // Line 4: "participant/team has been awarded a Cash Prize of ₹15,000."
-  const bodyY4 = bodyY3 + lineHeight
-  const l4p1 = 'participant/team has been awarded a Cash Prize of '
-  pdf.text(l4p1, bodyStartX, bodyY4)
-  const l4p1w = pdf.getTextWidth(l4p1)
-  pdf.setFont('times', 'bold')
-  pdf.setTextColor(...NAVY)
-  pdf.text(prize.amount + '.', bodyStartX + l4p1w, bodyY4)
+    pdf.setTextColor(...GREY)
+    pdf.text(l1p1, startX1, bodyY1)
+    pdf.setFont('times', 'bold')
+    pdf.setTextColor(...prize.badgeDark)
+    pdf.text(l1p2, startX1 + l1p1w, bodyY1)
+    pdf.setFont('times', 'normal')
+    pdf.setTextColor(...GREY)
+    pdf.text(l1p3, startX1 + l1p1w + l1p2w, bodyY1)
 
-  // Line 5
-  const bodyY5 = bodyY4 + lineHeight + 2
+    // LINE 2 (medium)
+    const bodyY2 = bodyY1 + lineHeight
+    const entityText = teamName ? `Team: ${teamName}` : 'The participant'
+    pdf.text(`and problem-solving skills throughout the competition. ${entityText} is awarded`, centerX, bodyY2, { align: 'center' })
+
+    // LINE 3 (shortest)
+    bodyY3 = bodyY2 + lineHeight
+    pdf.text(`the ${prize.positionTitle} badge in recognition of this achievement.`, centerX, bodyY3, { align: 'center' })
+
+  } else {
+    // ── TECHATHON: With cash prize ──
+    // LINE 1 (longest)
+    const l1p1 = 'has secured '
+    const l1p1w = pdf.getTextWidth(l1p1)
+    pdf.setFont('times', 'bold')
+    const l1p2 = prize.label
+    const l1p2w = pdf.getTextWidth(l1p2)
+    pdf.setFont('times', 'normal')
+    const l1p3 = ' in TECHATHON 1.0 for demonstrating outstanding innovation, technical excellence,'
+    const l1p3w = pdf.getTextWidth(l1p3)
+
+    const totalW1 = l1p1w + l1p2w + l1p3w
+    let startX1 = centerX - totalW1 / 2
+
+    pdf.setTextColor(...GREY)
+    pdf.text(l1p1, startX1, bodyY1)
+    pdf.setFont('times', 'bold')
+    pdf.setTextColor(...prize.badgeDark)
+    pdf.text(l1p2, startX1 + l1p1w, bodyY1)
+    pdf.setFont('times', 'normal')
+    pdf.setTextColor(...GREY)
+    pdf.text(l1p3, startX1 + l1p1w + l1p2w, bodyY1)
+
+    // LINE 2 (medium)
+    const bodyY2 = bodyY1 + lineHeight
+    pdf.text('and problem-solving skills throughout the competition. In recognition of this remarkable achievement,', centerX, bodyY2, { align: 'center' })
+
+    // LINE 3 (shortest)
+    bodyY3 = bodyY2 + lineHeight
+    const entityText = teamName ? `Team: ${teamName}` : 'the participant'
+
+    const l3p1 = `${entityText} has been awarded a Cash Prize of `
+    const l3p1w = pdf.getTextWidth(l3p1)
+    pdf.setFont('times', 'bold')
+    const l3p2 = prize.amount + '.'
+    const l3p2w = pdf.getTextWidth(l3p2)
+    const totalW3 = l3p1w + l3p2w
+    let startX3 = centerX - totalW3 / 2
+
+    pdf.setFont('times', 'normal')
+    pdf.setTextColor(...GREY)
+    pdf.text(l3p1, startX3, bodyY3)
+    pdf.setFont('times', 'bold')
+    pdf.setTextColor(...NAVY)
+    pdf.text(l3p2, startX3 + l3p1w, bodyY3)
+  }
+
+  // ═══ 11. DEDICATION (Italic) ═══
   pdf.setFont('times', 'italic')
-  pdf.setFontSize(11)
+  pdf.setFontSize(10)
   pdf.setTextColor(...LGREY)
-  pdf.text('Your dedication, creativity, and performance were truly exceptional and inspiring.', bodyStartX, bodyY5)
+  const dedicationY = bodyY3 + lineHeight + 4
+  pdf.text(
+    'Your dedication, creativity, and performance were truly exceptional and inspiring.',
+    centerX, dedicationY, { align: 'center' }
+  )
 
-  // ═══ 12. PRINCIPAL SIGNATURE ═══
+  // ═══ 11. PRINCIPAL SIGNATURE ═══
   const sigBottomMargin = 35
   const sigY = whiteY + whiteH - sigBottomMargin
 
@@ -402,20 +457,23 @@ export async function buildWinnerPdf({
   pdf.setTextColor(...SIG_GREY)
   pdf.text('Principal, BGMIT', centerX, sigY + 9.5, { align: 'center' })
 
-  // ═══ 13. DATE & PLACE ═══
-  const datePlaceY = bodyY5 + (sigY - bodyY5) / 2 + 2
+  // ═══ 12. DATE & PLACE ═══
+  const datePlaceY = sigY + 5
+  const displayDate = isRoborace ? '29 April 2026' : '01 May 2026'
 
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)
   pdf.setTextColor(...GREY)
   pdf.text('Date:', contentL, datePlaceY)
   pdf.setFont('times', 'normal')
-  pdf.text(' 01 May 2026', contentL + pdf.getTextWidth('Date:') + 1, datePlaceY)
+  pdf.text(` ${displayDate}`, contentL + pdf.getTextWidth('Date:') + 1, datePlaceY)
 
   pdf.setFont('times', 'bold')
   pdf.text('Place:', contentR - pdf.getTextWidth('Place:') - pdf.getTextWidth(' Mudhol') - 1, datePlaceY)
   pdf.setFont('times', 'normal')
   pdf.text(' Mudhol', contentR - pdf.getTextWidth(' Mudhol'), datePlaceY)
+
+  // (Badge was moved to section 9.5)
 
   // ═══ 14. QR CODE ═══
   if (qrCodeUrl) {

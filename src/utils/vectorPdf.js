@@ -288,39 +288,74 @@ export async function buildVectorPdf({
   pdf.setFont('times', 'normal')
 
   const isTechathon1 = eventName?.toLowerCase().includes('techathon')
+  const isRoborace = eventName?.toLowerCase().includes('roborace')
 
-  // Line 1: Normal + Bold + Normal
-  const p1 = 'has actively participated in the '
-  const w1 = pdf.getTextWidth(p1)
+  let bodyY3 // will track the last body line Y for layout below
 
-  const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
-  pdf.setFont('times', 'bold')
-  const w2 = pdf.getTextWidth(p2)
+  if (isRoborace) {
+    // ── Roborace: Inverted pyramid layout (3 lines) ──
+    // Line 1 (longest)
+    const r1a = 'has actively participated in the '
+    const r1b = 'RoboRace'
+    const r1c = ', on 29th April 2026. The event was organized by BGMIT, Mudhol.'
+    pdf.setFont('times', 'normal')
+    const wr1a = pdf.getTextWidth(r1a)
+    pdf.setFont('times', 'bold')
+    const wr1b = pdf.getTextWidth(r1b)
+    pdf.setFont('times', 'normal')
+    const wr1c = pdf.getTextWidth(r1c)
+    const totalR1 = wr1a + wr1b + wr1c
+    let rx1 = centerX - totalR1 / 2
+    pdf.text(r1a, rx1, bodyY1)
+    rx1 += wr1a
+    pdf.setFont('times', 'bold')
+    pdf.text(r1b, rx1, bodyY1)
+    rx1 += wr1b
+    pdf.setFont('times', 'normal')
+    pdf.text(r1c, rx1, bodyY1)
 
-  pdf.setFont('times', 'normal')
-  const p3 = isTechathon1 
-    ? ', conducted from April 30th to May 1st, 2026. The' 
-    : `, on ${eventDate && eventDate !== 'N/A' ? eventDate : 'Date'}. The`
-  const w3 = pdf.getTextWidth(p3)
+    // Line 2 (medium)
+    const bodyY2 = bodyY1 + lineHeight
+    pdf.text('Throughout the competition, the participant demonstrated exceptional enthusiasm,', centerX, bodyY2, { align: 'center' })
 
-  const totalW1 = w1 + w2 + w3
-  let startX1 = centerX - totalW1 / 2
+    // Line 3 (shortest)
+    bodyY3 = bodyY2 + lineHeight
+    pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
+  } else {
+    // ── Techathon / Default layout ──
+    // Line 1: Normal + Bold + Normal
+    const p1 = 'has actively participated in the '
+    const w1 = pdf.getTextWidth(p1)
 
-  pdf.text(p1, startX1, bodyY1)
-  startX1 += w1
-  pdf.setFont('times', 'bold')
-  pdf.text(p2, startX1, bodyY1)
-  startX1 += w2
-  pdf.setFont('times', 'normal')
-  pdf.text(p3, startX1, bodyY1)
+    const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
+    pdf.setFont('times', 'bold')
+    const w2 = pdf.getTextWidth(p2)
 
-  // Line 2
-  const bodyY2 = bodyY1 + lineHeight
-  pdf.text('event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm,', centerX, bodyY2, { align: 'center' })
+    pdf.setFont('times', 'normal')
+    const p3 = isTechathon1 
+      ? ', conducted from April 30th to May 1st, 2026. The' 
+      : `, on ${eventDate && eventDate !== 'N/A' ? eventDate : 'Date'}. The`
+    const w3 = pdf.getTextWidth(p3)
 
-  // Line 3
-  const bodyY3 = bodyY2 + lineHeight
-  pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
+    const totalW1 = w1 + w2 + w3
+    let startX1 = centerX - totalW1 / 2
+
+    pdf.text(p1, startX1, bodyY1)
+    startX1 += w1
+    pdf.setFont('times', 'bold')
+    pdf.text(p2, startX1, bodyY1)
+    startX1 += w2
+    pdf.setFont('times', 'normal')
+    pdf.text(p3, startX1, bodyY1)
+
+    // Line 2
+    const bodyY2 = bodyY1 + lineHeight
+    pdf.text('event was organized by BGMIT, Mudhol. Throughout the competition, the participant demonstrated exceptional enthusiasm,', centerX, bodyY2, { align: 'center' })
+
+    // Line 3
+    bodyY3 = bodyY2 + lineHeight
+    pdf.text('creativity, and a steadfast commitment to innovation.', centerX, bodyY3, { align: 'center' })
+  }
 
   // ═══ 11. PRINCIPAL SIGNATURE (centered) ═══
   const sigBottomMargin = 35 // Room from bottom for QR + cert ID below
@@ -355,13 +390,14 @@ export async function buildVectorPdf({
 
   // ═══ 12. DATE & PLACE ═══
   const datePlaceY = bodyY3 + (sigY - bodyY3) / 2 // Centered between body content and signature lines
+  const displayDate = isRoborace ? '29 April 2026' : '01 May 2026'
 
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)
   pdf.setTextColor(...GREY)
   pdf.text('Date:', contentL, datePlaceY)
   pdf.setFont('times', 'normal')
-  pdf.text(' 01 May 2026', contentL + pdf.getTextWidth('Date:') + 1, datePlaceY)
+  pdf.text(` ${displayDate}`, contentL + pdf.getTextWidth('Date:') + 1, datePlaceY)
 
   pdf.setFont('times', 'bold')
   pdf.text('Place:', contentR - pdf.getTextWidth('Place:') - pdf.getTextWidth(' Mudhol') - 1, datePlaceY)
