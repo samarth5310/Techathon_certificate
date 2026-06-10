@@ -459,7 +459,10 @@ export async function buildWinnerPdf({
 
   // ═══ 12. DATE & PLACE ═══
   const datePlaceY = sigY + 5
-  const displayDate = isRoborace ? '29 April 2026' : '01 May 2026'
+  // Use actual event date if provided, otherwise fallback to defaults
+  const displayDate = (eventDate && eventDate !== 'N/A' && eventDate !== '')
+    ? eventDate
+    : (isRoborace ? '29 April 2026' : '01 May 2026')
 
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)
