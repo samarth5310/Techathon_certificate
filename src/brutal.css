@@ -1,0 +1,488 @@
+@font-face {
+  font-family: 'KrinahFont';
+  src: url('/font/Krinahpersonal.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root, [data-theme='dark'] {
+  --bg-dark: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-inner: #0e0e0e;
+  --bg-input: #0d0d0d;
+  --border-brutal: #2a2a2a;
+  --border-accent: #ff3e3e;
+  --accent-red: #ff3e3e;
+  --accent-cyan: #00ffd5;
+  --accent-yellow: #ffe600;
+  --accent-magenta: #ff00ff;
+  --accent-lime: #b8ff00;
+  --text-primary: #f0f0f0;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --grid-color: rgba(255, 62, 62, 0.025);
+  --btn-text: #000000;
+}
+
+[data-theme='light'] {
+  --bg-dark: #fdf5e6;
+  --bg-card: #ffffff;
+  --bg-card-inner: #f4f4f4;
+  --bg-input: #ffffff;
+  --border-brutal: #000000;
+  --border-accent: #000000;
+  --accent-red: #ff2a2a;
+  --accent-cyan: #00b396;
+  --accent-yellow: #ffcc00;
+  --accent-magenta: #d900d9;
+  --accent-lime: #82b300;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --grid-color: rgba(0, 0, 0, 0.04);
+  --btn-text: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 60px,
+      var(--grid-color) 60px,
+      var(--grid-color) 61px),
+    repeating-linear-gradient(90deg,
+      transparent,
+      transparent 60px,
+      var(--grid-color) 60px,
+      var(--grid-color) 61px);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+p,
+span,
+label,
+button {
+  overflow-wrap: anywhere;
+}
+
+/* ═══════════════════════════════════════════
+   BRUTALIST CARD
+   ═══════════════════════════════════════════ */
+.brutal-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-brutal);
+  box-shadow: 6px 6px 0px #000;
+  position: relative;
+  padding-top: 6px;
+}
+
+.brutal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-cyan), var(--accent-yellow), var(--accent-magenta));
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent-red);
+  color: var(--btn-text);
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  cursor: pointer;
+  padding: 12px 20px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+.brutal-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 4px 4px 0px #000 !important;
+}
+
+.brutal-btn-cyan {
+  background: var(--accent-cyan);
+}
+
+.brutal-btn-yellow {
+  background: var(--accent-yellow);
+}
+
+.brutal-btn-lime {
+  background: var(--accent-lime);
+}
+
+.brutal-btn-magenta {
+  background: var(--accent-magenta);
+}
+
+/* ═══════════════════════════════════════════
+   INPUTS
+   ═══════════════════════════════════════════ */
+.brutal-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 2px solid var(--border-brutal);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.brutal-input:focus {
+  border-color: var(--accent-cyan);
+}
+
+.brutal-input::placeholder {
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+select.brutal-input option {
+  background-color: var(--bg-card);
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+}
+
+/* ═══════════════════════════════════════════
+   LABEL
+   ═══════════════════════════════════════════ */
+.brutal-label {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-cyan);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   MONO TEXT
+   ═══════════════════════════════════════════ */
+.mono {
+  font-family: 'JetBrains Mono', 'Space Mono', monospace;
+}
+
+/* ═══════════════════════════════════════════
+   HEADING
+   ═══════════════════════════════════════════ */
+.brutal-heading {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════
+   TICKER BAR
+   ═══════════════════════════════════════════ */
+.brutal-ticker {
+  background: var(--accent-red);
+  color: #000;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+}
+
+.brutal-ticker-inner {
+  display: inline-block;
+  animation: ticker 25s linear infinite;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   STATUS DOT
+   ═══════════════════════════════════════════ */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.status-dot-green {
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+.status-dot-red {
+  background: var(--accent-red);
+  box-shadow: 0 0 8px var(--accent-red);
+}
+
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   NOISE OVERLAY
+   ═══════════════════════════════════════════ */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════
+   MESSAGE BARS
+   ═══════════════════════════════════════════ */
+.msg-bar {
+  padding: 12px 16px;
+  border-left: 4px solid;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.msg-bar-error {
+  border-color: var(--accent-red);
+  background: rgba(255, 62, 62, 0.07);
+  color: var(--accent-red);
+}
+
+.msg-bar-success {
+  border-color: var(--accent-lime);
+  background: rgba(184, 255, 0, 0.07);
+  color: var(--accent-lime);
+}
+
+.msg-bar-warn {
+  border-color: var(--accent-yellow);
+  background: rgba(255, 230, 0, 0.07);
+  color: var(--accent-yellow);
+}
+
+.msg-bar-info {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 255, 213, 0.05);
+  color: var(--accent-cyan);
+}
+
+/* ═══════════════════════════════════════════
+   DATA CELL
+   ═══════════════════════════════════════════ */
+.data-cell {
+  background: var(--bg-dark);
+  border: 2px solid var(--border-brutal);
+  padding: 16px;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE IN ANIMATION
+   ═══════════════════════════════════════════ */
+.slide-in {
+  animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PAGE LAYOUT HELPERS
+   ═══════════════════════════════════════════ */
+.page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.section-gap {
+  margin-top: 20px;
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (min-width: 640px) {
+  .page-container {
+    padding: 32px 24px;
+  }
+
+  .section-gap {
+    margin-top: 24px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding: 40px 32px;
+  }
+
+  .section-gap {
+    margin-top: 28px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding: 48px 40px;
+  }
+
+  .section-gap {
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 639px) {
+  .brutal-card {
+    box-shadow: 4px 4px 0px #000;
+  }
+
+  .brutal-btn {
+    box-shadow: 3px 3px 0px #000;
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+
+  .brutal-input {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .brutal-ticker {
+    font-size: 10px;
+    padding: 6px 0;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   BRUTALIST SCROLLER
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+  border-left: 2px solid var(--border-brutal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-yellow);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-dark);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-yellow) var(--bg-dark);
+}
