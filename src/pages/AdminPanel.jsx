@@ -47,6 +47,74 @@ const AdminPanel = () => {
   })
   const [optionsLoading, setOptionsLoading] = useState(false)
 
+  const THEMES = [
+    { id: 'theme-1', name: 'Theme 1', primary: '#0F4C81', accent: '#D4AF37' },
+    { id: 'theme-2', name: 'Theme 2', primary: '#1E5631', accent: '#C8A951' },
+    { id: 'theme-3', name: 'Theme 3', primary: '#7A1F1F', accent: '#D4B06A' },
+    { id: 'theme-4', name: 'Theme 4', primary: '#0B3D2E', accent: '#E6C068' },
+    { id: 'theme-5', name: 'Theme 5', primary: '#4B2E83', accent: '#C9A227' },
+    { id: 'theme-6', name: 'Theme 6', primary: '#5A0F2D', accent: '#D9B65D' },
+    { id: 'theme-7', name: 'Theme 7', primary: '#1F2937', accent: '#F59E0B' },
+    { id: 'theme-8', name: 'Theme 8', primary: '#006D77', accent: '#E9C46A' },
+    { id: 'theme-9', name: 'Theme 9', primary: '#5B7DB1', accent: '#E3C86A' },
+    { id: 'theme-10', name: 'Theme 10', primary: '#6FA8DC', accent: '#F2D57E' },
+    { id: 'theme-11', name: 'Theme 11', primary: '#6D9F71', accent: '#E8CC7A' },
+    { id: 'theme-12', name: 'Theme 12', primary: '#8A7BC8', accent: '#E6CF85' },
+    { id: 'theme-13', name: 'Theme 13', primary: '#B36B7A', accent: '#F0D48A' },
+    { id: 'theme-14', name: 'Theme 14', primary: '#5B7DB1', accent: '#E3C86A' },
+    { id: 'theme-15', name: 'Theme 15', primary: '#6FA8DC', accent: '#F2D57E' },
+    { id: 'theme-16', name: 'Theme 16', primary: '#6D9F71', accent: '#E8CC7A' },
+    { id: 'theme-17', name: 'Theme 17', primary: '#8A7BC8', accent: '#E6CF85' },
+    { id: 'theme-18', name: 'Theme 18', primary: '#B36B7A', accent: '#F0D48A' },
+    { id: 'theme-19', name: 'Theme 19', primary: '#4F8FBA', accent: '#DCC77A' },
+    { id: 'theme-20', name: 'Theme 20', primary: '#7AA6A1', accent: '#EAD48F' },
+    { id: 'theme-21', name: 'Theme 21', primary: '#9B8AC9', accent: '#F2DEA0' },
+    { id: 'theme-22', name: 'Theme 22', primary: '#7B91C7', accent: '#E7D18B' },
+    { id: 'theme-23', name: 'Theme 23', primary: '#6E8F5F', accent: '#E5D08A' },
+    { id: 'theme-24', name: 'Theme 24', primary: '#7393B3', accent: '#F1D98C' },
+    { id: 'theme-25', name: 'Theme 25', primary: '#A88BC2', accent: '#E8D49A' },
+    { id: 'theme-26', name: 'Theme 26', primary: '#5F9EA0', accent: '#F2DFA7' },
+    { id: 'theme-27', name: 'Theme 27', primary: '#8E7DBE', accent: '#F0D692' },
+    { id: 'theme-28', name: 'Theme 28', primary: '#C17C74', accent: '#EED79A' },
+    { id: 'theme-29', name: 'Theme 29', primary: '#6495ED', accent: '#F5DEB3' },
+    { id: 'theme-30', name: 'Theme 30', primary: '#6B8E23', accent: '#E8D89B' },
+    { id: 'theme-31', name: 'Theme 31', primary: '#9370DB', accent: '#F4DFA1' },
+    { id: 'theme-32', name: 'Theme 32', primary: '#4682B4', accent: '#E6CC7F' },
+    { id: 'theme-33', name: 'Theme 33', primary: '#708090', accent: '#F2DCA5' },
+    { id: 'theme-34', name: 'Theme 34', primary: '#7B68EE', accent: '#EFD48D' },
+    { id: 'theme-35', name: 'Theme 35', primary: '#5DA399', accent: '#F3DEAA' },
+    { id: 'theme-36', name: 'Theme 36', primary: '#A67C52', accent: '#F2D7A0' },
+    { id: 'theme-37', name: 'Theme 37', primary: '#8093F1', accent: '#EED38A' },
+    { id: 'theme-38', name: 'Theme 38', primary: '#6C91BF', accent: '#F5E1A4' },
+  ]
+
+  const [selectedTheme, setSelectedTheme] = useState({ primary: '#5A0F2D', accent: '#D9B65D' })
+  const [themeCollapsed, setThemeCollapsed] = useState(true)
+
+  const fetchTheme = async () => {
+    try {
+      const docRef = doc(db, 'settings', 'theme')
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        setSelectedTheme(docSnap.data())
+      }
+    } catch (err) {
+      console.error('Failed to fetch theme', err)
+    }
+  }
+
+  const handleSelectTheme = async (themeObj) => {
+    setSelectedTheme({ primary: themeObj.primary, accent: themeObj.accent })
+    try {
+      const docRef = doc(db, 'settings', 'theme')
+      await setDoc(docRef, { primary: themeObj.primary, accent: themeObj.accent })
+      setEventMessage(`>> ${themeObj.name} selected globally`)
+    } catch (err) {
+      console.error('Failed to save theme', err)
+      setEventMessage(`// ERROR: Failed to save theme`)
+    }
+  }
+
   const fetchOptions = async () => {
     setOptionsLoading(true)
     try {
@@ -91,6 +159,7 @@ const AdminPanel = () => {
     if (user) {
       fetchEvents()
       fetchOptions()
+      fetchTheme()
     }
   }, [user])
 
@@ -115,6 +184,8 @@ const AdminPanel = () => {
         logoSrc: logoImage,
         swamiSrc: swamiImage,
         principalSignSrc: principalSignImage,
+        primaryColor: selectedTheme.primary,
+        accentColor: selectedTheme.accent,
       })
 
       pdf.save(`Template_${templateNum}_Preview.pdf`)
@@ -224,7 +295,7 @@ const AdminPanel = () => {
             // Check for normalized 'name' and 'email' keys
             const rawEmail = row.email || row['e-mail'] || row['email address']
             const rawName = row.name || row['full name'] || row['participant name']
-            
+
             if (!rawEmail || !rawName) {
               console.warn('Skipping row due to missing name or email:', row)
               continue
@@ -246,7 +317,7 @@ const AdminPanel = () => {
                 email: cleanEmail,
                 teamName: row.teamname || row['team name'] || '',
                 role: row.role || '',
-                problemStatement: row.problemstatement || row['problem statement'] || '',
+                problemStatement: row.problemstatement || row['problem statement'] || row['project title'] || row.projecttitle || '',
                 teamPhotoUrl: row.teamphotourl || row['team photo url'] || '',
                 certificateGenerated: row.certificategenerated === 'true' || false,
                 certificateId: row.certificateid || row['certificate id'] || generateCertificateId(),
@@ -267,7 +338,7 @@ const AdminPanel = () => {
           await batch.commit()
           setMessage(`>> Successfully uploaded ${count} participants`)
           fetchStats()
-          
+
           // Reset file input
           e.target.value = ''
         },
@@ -445,6 +516,85 @@ const AdminPanel = () => {
             </div>
           </div>
 
+          {/* ═══ CERTIFICATE THEME ═══ */}
+          <div className="brutal-card section-gap" style={{ padding: '28px 24px' }}>
+            <div
+              onClick={() => setThemeCollapsed(!themeCollapsed)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '4px', height: '24px', background: 'var(--accent-cyan)', flexShrink: 0 }}></div>
+                <h2 className="brutal-heading" style={{ fontSize: '15px', color: 'var(--accent-cyan)', margin: 0 }}>
+                  ▸ CERTIFICATE COLOR THEME
+                </h2>
+              </div>
+              <span style={{
+                fontSize: '12px',
+                color: 'var(--accent-cyan)',
+                transform: themeCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s',
+                display: 'inline-block',
+                fontWeight: 'bold'
+              }}>
+                ▼
+              </span>
+            </div>
+
+            {!themeCollapsed && (
+              <div style={{ marginTop: '20px' }}>
+                <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                  // Choose a global theme color combination for all participation certificates.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                  {THEMES.map((t) => {
+                    const isActive = selectedTheme.primary === t.primary && selectedTheme.accent === t.accent;
+                    return (
+                      <div
+                        key={t.id}
+                        onClick={() => handleSelectTheme(t)}
+                        style={{
+                          background: 'var(--bg-card-inner)',
+                          border: isActive ? '3px solid var(--accent-cyan)' : '1px solid var(--border-brutal)',
+                          boxShadow: isActive ? '4px 4px 0px var(--accent-cyan)' : '2px 2px 0px #000',
+                          padding: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '12px',
+                          alignItems: 'center',
+                          transition: 'transform 0.1s, box-shadow 0.1s',
+                          transform: isActive ? 'translate(-2px, -2px)' : 'none',
+                        }}
+                        className="theme-card-hover"
+                      >
+                        {/* Swatch Display */}
+                        <div style={{ display: 'flex', width: '100%', height: '36px', border: '1px solid var(--border-brutal)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ flex: 2, background: t.primary }} />
+                          <div style={{ flex: 1, background: t.accent }} />
+                        </div>
+
+                        <div style={{ textAlign: 'center' }}>
+                          <p className="mono" style={{ fontSize: '13px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{t.name}</p>
+                          <p className="mono" style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px', textTransform: 'uppercase' }}>
+                            {t.primary} · {t.accent}
+                          </p>
+                        </div>
+
+                        <button
+                          className={`brutal-btn ${isActive ? 'brutal-btn-cyan' : ''}`}
+                          style={{ width: '100%', padding: '4px 0', fontSize: '11px', pointerEvents: 'none' }}
+                        >
+                          {isActive ? '[ ACTIVE ]' : 'SELECT'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* ═══ PARTICIPANT SETTINGS ═══ */}
           <div className="brutal-card section-gap" style={{ padding: '28px 24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
@@ -453,7 +603,7 @@ const AdminPanel = () => {
                 ▸ PARTICIPANT OPTIONS
               </h2>
             </div>
-            
+
             <p className="mono" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>
               // Enable or disable features available to participants on the portal.
             </p>

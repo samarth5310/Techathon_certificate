@@ -17,7 +17,13 @@ const CertificatePreview = ({
   qrCodeUrl,
   department,
   previewRef,
+  problemStatement,
+  primaryColor = '#5A0F2D',
+  accentColor = '#D9B65D',
 }) => {
+  const isPaperPres = (eventName || '').toLowerCase().includes('paper presentation');
+  const finalPrimary = isPaperPres ? '#4B2E83' : primaryColor;
+  const finalAccent = isPaperPres ? '#C9A227' : accentColor;
   const useTechathonTemplate = isTechathon(eventName)
 
   return (
@@ -35,7 +41,7 @@ const CertificatePreview = ({
           maxWidth: '1123px',
           margin: '0 auto',
           overflow: 'hidden',
-          backgroundColor: useTechathonTemplate ? '#4338CA' : '#fdf8f0',
+          backgroundColor: useTechathonTemplate ? finalPrimary : '#fdf8f0',
         }}
       >
         <div style={{
@@ -52,6 +58,9 @@ const CertificatePreview = ({
                 certificateDate={certificateDate}
                 certificateId={certificateId}
                 qrCodeUrl={qrCodeUrl}
+                problemStatement={problemStatement}
+                primaryColor={finalPrimary}
+                accentColor={finalAccent}
               />
             ) : (
               <Template2
@@ -61,6 +70,9 @@ const CertificatePreview = ({
                 certificateId={certificateId}
                 qrCodeUrl={qrCodeUrl}
                 department={department}
+                problemStatement={problemStatement}
+                primaryColor={finalPrimary}
+                accentColor={finalAccent}
               />
             )
           ) : (

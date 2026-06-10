@@ -14,6 +14,32 @@ const VerifyCertificate = () => {
   const [searchId, setSearchId] = useState(certificateId || '')
 
   useEffect(() => {
+    const fetchPaperPresenters = async (problemStatement, eventName, currentEmail) => {
+      if (!problemStatement) return
+      setLoadingMembers(true)
+      try {
+        const participantsRef = collection(db, 'participants')
+        const q = query(
+          participantsRef,
+          where('problemStatement', '==', problemStatement),
+          where('eventName', '==', eventName)
+        )
+        const snapshot = await getDocs(q)
+        const members = []
+        snapshot.forEach((doc) => {
+          const data = doc.data()
+          if (data.email !== currentEmail) {
+            members.push({ id: doc.id, ...data })
+          }
+        })
+        setTeamMembers(members)
+      } catch (err) {
+        console.error('Error fetching paper presenters:', err)
+      } finally {
+        setLoadingMembers(false)
+      }
+    }
+
     const fetchTeamMembers = async (teamName, eventName, currentEmail) => {
       if (!teamName) return
       setLoadingMembers(true)
@@ -78,7 +104,10 @@ const VerifyCertificate = () => {
           setCertificate(certData)
           setError('')
           
-          if (certData.teamName && certData.eventName) {
+          const isPaperPres = certData.eventName?.toLowerCase().includes('paper presentation');
+          if (isPaperPres && certData.problemStatement) {
+            fetchPaperPresenters(certData.problemStatement, certData.eventName, certData.email)
+          } else if (certData.teamName && certData.eventName) {
             fetchTeamMembers(certData.teamName, certData.eventName, certData.email)
           }
         }
@@ -210,9 +239,11 @@ const VerifyCertificate = () => {
                     ✓
                   </div>
                   <h2 className="brutal-heading" style={{ fontSize: 'clamp(18px, 3vw, 26px)', color: '#00ff88' }}>
-                    {certificate.eventName?.toLowerCase().includes('techathon 1.0') 
-                      ? 'CERTIFICATE VERIFIED' 
-                      : 'VERIFIED AS PARTICIPANT'}
+                    {certificate.eventName?.toLowerCase().includes('paper presentation')
+                      ? 'VERIFIED PRESENTATION'
+                      : certificate.eventName?.toLowerCase().includes('techathon 1.0') 
+                        ? 'CERTIFICATE VERIFIED' 
+                        : 'VERIFIED AS PARTICIPANT'}
                   </h2>
                 </div>
 
@@ -234,6 +265,15 @@ const VerifyCertificate = () => {
                   gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
                   gap: '12px',
                 }}>
+                  {certificate.eventName?.toLowerCase().includes('paper presentation') && certificate.problemStatement && (
+                    <div className="data-cell" style={{ gridColumn: '1 / -1', borderColor: 'var(--accent-cyan)' }}>
+                      <p className="brutal-label">PAPER TITLE / PROJECT TITLE</p>
+                      <p className="mono" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--accent-yellow)', wordBreak: 'break-word' }}>
+                        "{certificate.problemStatement}"
+                      </p>
+                    </div>
+                  )}
+
                   <div className="data-cell">
                     <p className="brutal-label">PARTICIPANT</p>
                     <p className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-red)' }}>
@@ -296,17 +336,19 @@ const VerifyCertificate = () => {
               </div>
             ) : null}
 
-            {/* ═══ TEAM MEMBERS ═══ */}
-            {certificate && certificate.teamName && teamMembers.length > 0 && (
+            {/* ═══ TEAM MEMBERS / CO-PRESENTERS ═══ */}
+            {certificate && teamMembers.length > 0 && (
               <div className="brutal-card" style={{ marginTop: '24px', padding: '24px', borderColor: 'var(--accent-yellow)' }}>
                 <h3 className="brutal-heading" style={{ fontSize: '18px', color: 'var(--accent-yellow)', marginBottom: '16px' }}>
-                  TEAM: {certificate.teamName}
+                  {certificate.eventName?.toLowerCase().includes('paper presentation') 
+                    ? 'CO-PRESENTERS / TEAM' 
+                    : `TEAM: ${certificate.teamName || 'MEMBERS'}`}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {teamMembers.map((member) => (
                     <div key={member.id} className="data-cell" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                       <div>
-                        <p className="brutal-label" style={{ fontSize: '12px' }}>{member.role ? member.role.toUpperCase() : 'MEMBER'}</p>
+                        <p className="brutal-label" style={{ fontSize: '12px' }}>{member.role ? member.role.toUpperCase() : 'CO-PRESENTER'}</p>
                         <p className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>{member.name}</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>

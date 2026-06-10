@@ -14,15 +14,29 @@ const EMAIL_ENDPOINT = import.meta.env.VITE_CERTIFICATE_EMAIL_ENDPOINT || '/api/
 const ONE_DAY_MS = 24 * 60 * 60 * 1000 // Standard 24 hours
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000
 
-const toDisplayDate = (value) => {
-  if (!value) return new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })
+const toDisplayDate = (value, eventName = '') => {
+  if (!value) {
+    const lower = (eventName || '').toLowerCase();
+    if (lower.includes('paper presentation')) return '29th April 2026';
+    if (lower.includes('roborace')) return '29 April 2026';
+    if (lower.includes('techathon')) return '01 May 2026';
+    return '01 May 2026';
+  }
   if (typeof value?.toDate === 'function') {
     return value.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' })
   }
   if (value?.seconds) {
     return new Date(value.seconds * 1000).toLocaleDateString('en-IN', { dateStyle: 'long' })
   }
-  return new Date(value).toLocaleDateString('en-IN', { dateStyle: 'long' })
+  const dObj = new Date(value);
+  if (isNaN(dObj.getTime())) {
+    const lower = (eventName || '').toLowerCase();
+    if (lower.includes('paper presentation')) return '29th April 2026';
+    if (lower.includes('roborace')) return '29 April 2026';
+    if (lower.includes('techathon')) return '01 May 2026';
+    return '01 May 2026';
+  }
+  return dObj.toLocaleDateString('en-IN', { dateStyle: 'long' })
 }
 
 const GenerateCertificate = () => {
@@ -49,6 +63,8 @@ const GenerateCertificate = () => {
     download: true,
   })
 
+  const [theme, setTheme] = useState({ primary: '#5A0F2D', accent: '#D9B65D' })
+
   // Fetch settings from Firestore
   useEffect(() => {
     const fetchOptions = async () => {
@@ -62,7 +78,19 @@ const GenerateCertificate = () => {
         console.error('Failed to fetch options:', err)
       }
     }
+    const fetchTheme = async () => {
+      try {
+        const docRef = doc(db, 'settings', 'theme')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          setTheme(docSnap.data())
+        }
+      } catch (err) {
+        console.error('Failed to fetch theme:', err)
+      }
+    }
     fetchOptions()
+    fetchTheme()
   }, [])
 
   // Fetch events from Firestore
@@ -98,7 +126,10 @@ const GenerateCertificate = () => {
     setSelectedDepartment(eventObj?.department || '')
   }
 
-  const certificateDate = useMemo(() => formData.eventDate || toDisplayDate(participant?.date), [participant, formData.eventDate])
+  const certificateDate = useMemo(() => 
+    formData.eventDate || toDisplayDate(participant?.date, participant?.eventName || formData.eventName), 
+    [participant, formData.eventDate, formData.eventName]
+  )
 
   const validateParticipant = async (e) => {
     e.preventDefault()
@@ -221,6 +252,9 @@ const GenerateCertificate = () => {
         logoSrc: logoImage,
         swamiSrc: swamiImage,
         principalSignSrc: principalSignImage,
+        problemStatement: participant.problemStatement || '',
+        primaryColor: theme.primary,
+        accentColor: theme.accent,
       })
 
       const fileName = `${participant.name.replace(/\s+/g, '_')}_${formData.eventName.replace(/\s+/g, '')}.pdf`
@@ -283,6 +317,9 @@ const GenerateCertificate = () => {
         logoSrc: logoImage,
         swamiSrc: swamiImage,
         principalSignSrc: principalSignImage,
+        problemStatement: participant.problemStatement || '',
+        primaryColor: theme.primary,
+        accentColor: theme.accent,
       })
 
       const pdfBase64 = pdf.output('datauristring').split(',')[1]
@@ -836,6 +873,9 @@ const GenerateCertificate = () => {
                 qrCodeUrl={qrCodeUrl}
                 department={selectedDepartment}
                 previewRef={certificateRef}
+                problemStatement={participant?.problemStatement || ''}
+                primaryColor={theme.primary}
+                accentColor={theme.accent}
               />
             )}
           </div>

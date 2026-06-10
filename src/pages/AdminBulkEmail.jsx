@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useNavigate, Link } from 'react-router-dom'
 import { db, auth } from '../firebase/config'
@@ -27,6 +27,22 @@ const AdminBulkEmail = () => {
   const certRef = useRef(null)
   const [currentRender, setCurrentRender] = useState(null)
 
+  const [theme, setTheme] = useState({ primary: '#5A0F2D', accent: '#D9B65D' })
+
+  useEffect(() => {
+    const fetchTheme = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'settings', 'theme'))
+        if (docSnap.exists()) {
+          setTheme(docSnap.data())
+        }
+      } catch (err) {
+        console.error('Failed to fetch theme:', err)
+      }
+    }
+    fetchTheme()
+  }, [])
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
@@ -40,8 +56,10 @@ const AdminBulkEmail = () => {
     setLoading(true)
     try {
       const snap = await getDocs(collection(db, 'participants'))
-      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-      setParticipants(list.sort((a, b) => a.name.localeCompare(b.name)))
+      const list = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(p => p.name && p.email && p.eventName)
+      setParticipants(list.sort((a, b) => (a.name || '').localeCompare(b.name || '')))
     } catch (err) {
       addLog(`Error fetching participants: ${err.message}`, 'error')
     } finally {
@@ -94,15 +112,30 @@ const AdminBulkEmail = () => {
         
         // 2. Generate Vector PDF
         const targetDate = p.eventDate || p.date
+        let formattedDate = 'N/A'
+        if (targetDate) {
+          if (typeof targetDate.toDate === 'function') {
+            formattedDate = targetDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' })
+          } else {
+            const parsed = new Date(targetDate)
+            if (!isNaN(parsed.getTime())) {
+              formattedDate = parsed.toLocaleDateString('en-IN', { dateStyle: 'long' })
+            }
+          }
+        }
+
         const pdf = await buildVectorPdf({
           participantName: p.name,
           certificateId: certId,
           eventName: p.eventName,
-          eventDate: targetDate ? (typeof targetDate.toDate === 'function' ? targetDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' }) : new Date(targetDate).toLocaleDateString('en-IN', { dateStyle: 'long' })) : 'N/A',
+          eventDate: formattedDate,
           qrCodeUrl: qrUrl,
           logoSrc: logoImage,
           swamiSrc: swamiImage,
           principalSignSrc: principalSignImage,
+          problemStatement: p.problemStatement || '',
+          primaryColor: theme.primary,
+          accentColor: theme.accent,
         })
         const base64Pdf = pdf.output('datauristring').split(',')[1]
         

@@ -242,6 +242,9 @@ const AdminWinners = () => {
         const docId = `${w.email.trim()}_${safeEventName}`
         const participantDoc = doc(db, 'participants', docId)
         await setDoc(participantDoc, {
+          name: w.name,
+          email: w.email.trim(),
+          eventName: currentEventName,
           isWinner: true,
           prizePosition: w.prize,
           winnerCertificateId: certId,

@@ -42,6 +42,14 @@ function loadImage(src) {
   })
 }
 
+function hexToRgb(hex) {
+  const clean = hex.replace('#', '')
+  const r = parseInt(clean.substring(0, 2), 16)
+  const g = parseInt(clean.substring(2, 4), 16)
+  const b = parseInt(clean.substring(4, 6), 16)
+  return [r, g, b]
+}
+
 /**
  * Build a fully vector certificate PDF matching Template2.jsx layout exactly.
  */
@@ -54,7 +62,13 @@ export async function buildVectorPdf({
   logoSrc,
   swamiSrc,
   principalSignSrc,
+  problemStatement = '',
+  primaryColor: propPrimaryColor = '#5A0F2D',
+  accentColor: propAccentColor = '#D9B65D',
 }) {
+  const isPaperPres = (eventName || '').toLowerCase().includes('paper presentation');
+  const primaryColor = isPaperPres ? '#4B2E83' : propPrimaryColor;
+  const accentColor = isPaperPres ? '#C9A227' : propAccentColor;
   const [logoData, swamiData, principalSignData] = await Promise.all([
     logoSrc ? loadImage(logoSrc) : Promise.resolve(null),
     swamiSrc ? loadImage(swamiSrc) : Promise.resolve(null),
@@ -64,9 +78,9 @@ export async function buildVectorPdf({
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true })
 
   // ─── COLORS ───
-  const INDIGO = [67, 56, 202]     // #4338CA
-  const GOLD = [212, 175, 55]    // #D4AF37
-  const NAVY = [30, 58, 138]     // #1E3A8A
+  const INDIGO = hexToRgb(primaryColor)
+  const GOLD = hexToRgb(accentColor)
+  const NAVY = hexToRgb(primaryColor)
   const IVORY = [250, 249, 246]   // #FAF9F6
   const BLACK = [0, 0, 0]
   const GREY = [51, 51, 51]      // #333
@@ -281,7 +295,8 @@ export async function buildVectorPdf({
 
   // ═══ 10. BODY TEXT (Dynamic content) ═══
   pdf.setTextColor(...GREY)
-  const bodyY1 = underlineY + 12
+  const isPaperPresentation = eventName?.toLowerCase().includes('paper presentation')
+  const bodyY1 = isPaperPresentation ? underlineY + 8 : underlineY + 12
   const lineHeight = 7.5
 
   pdf.setFontSize(13)
@@ -292,7 +307,93 @@ export async function buildVectorPdf({
 
   let bodyY3 // will track the last body line Y for layout below
 
-  if (isRoborace) {
+  if (isPaperPresentation) {
+    pdf.setFontSize(11)
+    const pHeight = 6.0 // perfect spacing height
+    
+    // Draw Line 1: has successfully presented a paper titled
+    const line1 = 'has successfully presented a paper titled'
+    pdf.setFont('times', 'normal')
+    pdf.text(line1, centerX, bodyY1, { align: 'center' })
+
+    // Draw Line 2: "Project Title" (bold, color black, wrapped if too long)
+    const bodyY2 = bodyY1 + pHeight
+    pdf.setFont('times', 'bold')
+    pdf.setTextColor(...BLACK)
+    
+    let titleFontSize = 11
+    pdf.setFontSize(titleFontSize)
+    const maxTitleW = contentW * 0.95
+    const cleanTitle = (problemStatement || 'Project Title')
+      .trim()
+      .replace(/^["'“‘]+|["'”’]+$/g, '');
+    const titleText = `"${cleanTitle}"`
+    
+    // Dynamically scale down font size until it fits on one line (down to minimum 8pt)
+    while (pdf.getTextWidth(titleText) > maxTitleW && titleFontSize > 8) {
+      titleFontSize -= 0.5
+      pdf.setFontSize(titleFontSize)
+    }
+    
+    const wrappedTitle = pdf.splitTextToSize(titleText, maxTitleW)
+    pdf.text(wrappedTitle, centerX, bodyY2, { align: 'center' })
+
+    // Calculate Y offset for subsequent lines based on wrapped title's height
+    const titleLinesCount = wrappedTitle.length
+    const bodyY3_temp = bodyY2 + (titleLinesCount - 1) * pHeight + pHeight
+
+    pdf.setFontSize(11)
+    pdf.setTextColor(...GREY)
+    
+    // Draw Line 3: during the Paper Presentation Competition organized by the Department of
+    const l2p1 = 'during the '
+    const wl2p1 = pdf.getTextWidth(l2p1)
+    pdf.setFont('times', 'bold')
+    const l2p2 = 'Paper Presentation Competition'
+    const wl2p2 = pdf.getTextWidth(l2p2)
+    pdf.setFont('times', 'normal')
+    const l2p3 = ' organized by the Department of'
+    const wl2p3 = pdf.getTextWidth(l2p3)
+    
+    const totalW2 = wl2p1 + wl2p2 + wl2p3
+    let startX2 = centerX - totalW2 / 2
+    
+    pdf.text(l2p1, startX2, bodyY3_temp)
+    pdf.setFont('times', 'bold')
+    pdf.text(l2p2, startX2 + wl2p1, bodyY3_temp)
+    pdf.setFont('times', 'normal')
+    pdf.text(l2p3, startX2 + wl2p1 + wl2p2, bodyY3_temp)
+
+    // Draw Line 4: Computer Science and Engineering, BGMIT, Mudhol, held on 29th April 2026.
+    const bodyY4 = bodyY3_temp + pHeight
+    const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on '
+    const wl3p1 = pdf.getTextWidth(l3p1)
+    
+    const finalDate = eventDate && eventDate !== 'N/A' ? eventDate : '29th April 2026'
+    pdf.setFont('times', 'bold')
+    const wl3p2 = pdf.getTextWidth(finalDate)
+    
+    pdf.setFont('times', 'normal')
+    const l3p3 = '.'
+    const wl3p3 = pdf.getTextWidth(l3p3)
+    
+    const totalW3 = wl3p1 + wl3p2 + wl3p3
+    let startX3 = centerX - totalW3 / 2
+    
+    pdf.text(l3p1, startX3, bodyY4)
+    pdf.setFont('times', 'bold')
+    pdf.text(finalDate, startX3 + wl3p1, bodyY4)
+    pdf.setFont('times', 'normal')
+    pdf.text(l3p3, startX3 + wl3p1 + wl3p2, bodyY4)
+
+    // Draw Line 5: This certificate is awarded in appreciation...
+    const bodyY5 = bodyY4 + pHeight + 3.0
+    pdf.setFont('times', 'italic')
+    pdf.setFontSize(9.5)
+    pdf.text('This certificate is awarded in appreciation of their enthusiastic participation and academic contribution.', centerX, bodyY5, { align: 'center' })
+
+    bodyY3 = bodyY5
+  } else if (isRoborace) {
     // ── Roborace: Inverted pyramid layout (3 lines) ──
     // Line 1 (longest)
     const r1a = 'has actively participated in the '
@@ -358,7 +459,7 @@ export async function buildVectorPdf({
   }
 
   // ═══ 11. PRINCIPAL SIGNATURE (centered) ═══
-  const sigBottomMargin = 35 // Room from bottom for QR + cert ID below
+  const sigBottomMargin = 26 // Room from bottom for QR + cert ID below
   const sigY = whiteY + whiteH - sigBottomMargin
   const sigLineW = 55 // Signature line width
 
@@ -390,7 +491,9 @@ export async function buildVectorPdf({
 
   // ═══ 12. DATE & PLACE ═══
   const datePlaceY = bodyY3 + (sigY - bodyY3) / 2 // Centered between body content and signature lines
-  const displayDate = isRoborace ? '29 April 2026' : '01 May 2026'
+  const displayDate = eventDate && eventDate !== 'N/A' && eventDate !== '' 
+    ? eventDate 
+    : (isPaperPres ? '29th April 2026' : (isRoborace ? '29 April 2026' : '01 May 2026'))
 
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)
@@ -405,11 +508,12 @@ export async function buildVectorPdf({
   const placeTextX = contentR - pdf.getTextWidth(' Mudhol')
   pdf.text(' Mudhol', placeTextX, datePlaceY)
 
-  // ═══ 13. QR CODE (bottom-left, below signatures) ═══
+  // ═══ 13. QR CODE (bottom-left, within Ivory Area) ═══
+  const bottomLimitY = whiteY + whiteH - 6
   if (qrCodeUrl) {
     const qrSize = 14
     const qrX = contentL
-    const qrY = sigY + 14 // Below signature role text
+    const qrY = bottomLimitY - qrSize
     pdf.addImage(qrCodeUrl, 'PNG', qrX, qrY, qrSize, qrSize)
 
     pdf.setDrawColor(204, 204, 204)
@@ -417,9 +521,9 @@ export async function buildVectorPdf({
     pdf.rect(qrX, qrY, qrSize, qrSize, 'S')
   }
 
-  // ═══ 14. CERTIFICATE ID (bottom-right, below signatures) ═══
+  // ═══ 14. CERTIFICATE ID (bottom-right, within Ivory Area) ═══
   const certIdX = contentR
-  const certIdY = sigY + 22 // Aligned with bottom of QR code area
+  const certIdY = bottomLimitY - 2
 
   pdf.setFont('courier', 'normal')
   pdf.setFontSize(8)

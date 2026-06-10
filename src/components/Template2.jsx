@@ -3,7 +3,20 @@ import logoImage from '../../code/logo.png';
 import swamiImage from '../../code/swami.png';
 import principalSignImage from '../../code/principal_sign.png';
 
-const Template2 = ({ participantName, eventName, certificateDate, certificateId, qrCodeUrl, department }) => {
+const Template2 = ({
+  participantName,
+  eventName,
+  certificateDate,
+  certificateId,
+  qrCodeUrl,
+  department,
+  problemStatement,
+  primaryColor: propPrimaryColor = '#5A0F2D',
+  accentColor: propAccentColor = '#D9B65D'
+}) => {
+  const isPaperPres = (eventName || '').toLowerCase().includes('paper presentation');
+  const primaryColor = isPaperPres ? '#4B2E83' : propPrimaryColor;
+  const accentColor = isPaperPres ? '#C9A227' : propAccentColor;
   const containerRef = useRef(null);
   const [scale, setScale] = useState(1);
 
@@ -31,13 +44,24 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
     nameSizeMm = 9.17; // 26pt
   }
 
+  const cleanTitle = (problemStatement || 'Project Title')
+    .trim()
+    .replace(/^["'“‘]+|["'”’]+$/g, '');
+  const titleLen = cleanTitle.length;
+  let titleSizeMm = 4.2; // default
+  if (titleLen > 90) {
+    titleSizeMm = 3.3; // scale down
+  } else if (titleLen > 60) {
+    titleSizeMm = 3.7;
+  }
+
   return (
     <div
       ref={containerRef}
       style={{
         width: '100%',
         height: '100%',
-        background: '#4338CA',
+        background: primaryColor,
         position: 'relative',
         fontFamily: "'Times New Roman', Times, serif",
         overflow: 'hidden',
@@ -51,7 +75,7 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         left: mm(9),
         width: mm(297 - 18),
         height: mm(210 - 18),
-        border: `${mm(3)} solid #D4AF37`,
+        border: `${mm(3)} solid ${accentColor}`,
         boxSizing: 'border-box',
         pointerEvents: 'none',
         zIndex: 1,
@@ -77,9 +101,9 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
           { bottom: mm(4), left: mm(4), transform: 'rotate(270deg)' }
         ].map((pos, i) => (
           <div key={i} style={{ position: 'absolute', ...pos }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: mm(18), height: mm(0.8), background: '#D4AF37' }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, width: mm(0.8), height: mm(18), background: '#D4AF37' }} />
-            <div style={{ position: 'absolute', top: mm(-0.5), left: mm(-0.5), width: mm(2), height: mm(2), background: '#D4AF37', transform: 'rotate(45deg)' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, width: mm(18), height: mm(0.8), background: accentColor }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, width: mm(0.8), height: mm(18), background: accentColor }} />
+            <div style={{ position: 'absolute', top: mm(-0.5), left: mm(-0.5), width: mm(2), height: mm(2), background: accentColor, transform: 'rotate(45deg)' }} />
           </div>
         ))}
 
@@ -103,13 +127,13 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         <img src={swamiImage} alt="" style={{ position: 'absolute', top: mm(8), right: mm(12), width: mm(18.98), height: mm(22), objectFit: 'contain', zIndex: 1 }} />
 
         {/* College Header (Lines absolutely positioned to match vector baselines) */}
-        <p style={{ position: 'absolute', top: mm(10), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.58), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.05em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+        <p style={{ position: 'absolute', top: mm(10), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.58), fontWeight: 700, color: primaryColor, letterSpacing: '0.05em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
           B.V.V SANGHA'S
         </p>
-        <p style={{ position: 'absolute', top: mm(16.5), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+        <p style={{ position: 'absolute', top: mm(16.5), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: primaryColor, letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
           BILURU GURUBASAVA MAHASWAMIJI INSTITUTE OF
         </p>
-        <p style={{ position: 'absolute', top: mm(23), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: '#1E3A8A', letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
+        <p style={{ position: 'absolute', top: mm(23), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(5.64), fontWeight: 700, color: primaryColor, letterSpacing: '0.03em', textShadow: `${mm(0.4)} ${mm(0.4)} 0 #B4BEDC`, lineHeight: 1, zIndex: 1 }}>
           TECHNOLOGY, MUDHOL
         </p>
 
@@ -125,9 +149,9 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
           justifyContent: 'center',
           zIndex: 1,
         }}>
-          <div style={{ width: mm(1.8), height: mm(1.8), borderRadius: '50%', background: '#D4AF37' }} />
-          <div style={{ flex: 1, height: mm(0.5), background: '#D4AF37', margin: `0 ${mm(2)}` }} />
-          <div style={{ width: mm(1.8), height: mm(1.8), borderRadius: '50%', background: '#D4AF37' }} />
+          <div style={{ width: mm(1.8), height: mm(1.8), borderRadius: '50%', background: accentColor }} />
+          <div style={{ flex: 1, height: mm(0.5), background: accentColor, margin: `0 ${mm(2)}` }} />
+          <div style={{ width: mm(1.8), height: mm(1.8), borderRadius: '50%', background: accentColor }} />
         </div>
 
         {/* Certificate Title Banner */}
@@ -145,7 +169,7 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         }}>
           {/* SVG Background for Ribbon to avoid html2canvas CSS border bugs */}
           <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }} preserveAspectRatio="none" viewBox="0 0 150 11">
-            <polygon points="0,0 5,5.5 0,11 150,11 145,5.5 150,0" fill="#1E3A8A" />
+            <polygon points="0,0 5,5.5 0,11 150,11 145,5.5 150,0" fill={primaryColor} />
           </svg>
           <p style={{
             margin: 0, color: '#FFFFFF', fontSize: mm(6.35), fontWeight: 700, letterSpacing: '0.1em'
@@ -162,14 +186,32 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         <div style={{ position: 'absolute', top: mm(68), width: '100%', textAlign: 'center', zIndex: 1 }}>
-          <p style={{ margin: 0, fontSize: mm(nameSizeMm), fontWeight: 700, color: '#1E3A8A' }}>
+          <p style={{ margin: 0, fontSize: mm(nameSizeMm), fontWeight: 700, color: primaryColor }}>
             {participantName || 'Participant Name'}
           </p>
           <div style={{ width: mm(120), height: mm(0.5), background: '#333', margin: `${mm(2)} auto 0` }} />
         </div>
 
-        <div style={{ position: 'absolute', top: mm(90), width: '100%', textAlign: 'center', zIndex: 1 }}>
-          {(eventName || '').toLowerCase().includes('roborace') ? (
+        <div style={{ position: 'absolute', top: mm(82), width: '100%', textAlign: 'center', zIndex: 1 }}>
+          {(eventName || '').toLowerCase().includes('paper presentation') ? (
+            <>
+              <p style={{ margin: '0 auto', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(220) }}>
+                has successfully presented a paper titled
+              </p>
+              <p style={{ margin: '4px auto 0', fontSize: mm(titleSizeMm), color: '#000000', fontWeight: 700, lineHeight: 1.35, width: mm(260) }}>
+                "{cleanTitle}"
+              </p>
+              <p style={{ margin: '4px auto 0', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(240) }}>
+                during the <strong>Paper Presentation Competition</strong> organized by the Department of Computer Science and Engineering,
+              </p>
+              <p style={{ margin: '4px auto 0', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(240) }}>
+                BGMIT, Mudhol, held on <strong>{certificateDate || '29th April 2026'}</strong>.
+              </p>
+              <p style={{ margin: '10px auto 0', fontSize: mm(3.5), color: '#555', fontStyle: 'italic', lineHeight: 1.35, width: mm(240) }}>
+                This certificate is awarded in appreciation of their enthusiastic participation and academic contribution.
+              </p>
+            </>
+          ) : (eventName || '').toLowerCase().includes('roborace') ? (
             <>
               <p style={{ margin: '0 auto', fontSize: mm(4.58), color: '#333', lineHeight: 1.6, width: mm(260) }}>
                 has actively participated in the <strong>RoboRace</strong>, on 29th April 2026. The event was organized by BGMIT, Mudhol.
@@ -189,27 +231,27 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Date and Place */}
-        <div style={{ position: 'absolute', top: mm(129), left: mm(12), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(135), left: mm(12), zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(4.23), color: '#333' }}>
-            <strong>Date:</strong> {(eventName || '').toLowerCase().includes('roborace') ? '29 April 2026' : '01 May 2026'}
+            <strong>Date:</strong> {certificateDate || ((eventName || '').toLowerCase().includes('paper presentation') ? '29th April 2026' : ((eventName || '').toLowerCase().includes('roborace') ? '29 April 2026' : '01 May 2026'))}
           </p>
         </div>
-        <div style={{ position: 'absolute', top: mm(129), right: mm(12), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(135), right: mm(12), zIndex: 1 }}>
           <p style={{ margin: 0, fontSize: mm(4.23), color: '#333' }}>
             <strong>Place:</strong> Mudhol
           </p>
         </div>
 
         {/* Signature */}
-        <div style={{ position: 'absolute', top: mm(136), left: '50%', transform: 'translateX(-50%)', width: mm(60), height: mm(40), zIndex: 1 }}>
+        <div style={{ position: 'absolute', top: mm(145), left: '50%', transform: 'translateX(-50%)', width: mm(60), height: mm(40), zIndex: 1 }}>
           <img src={principalSignImage} alt="Signature" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', height: mm(22) }} />
           <div style={{ position: 'absolute', top: mm(23), left: '50%', transform: 'translateX(-50%)', width: mm(55), height: mm(0.4), background: '#333' }} />
-          <p style={{ position: 'absolute', top: mm(28), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.23), fontWeight: 700, color: '#1E3A8A', lineHeight: 1 }}>Dr. Shravankumar B. Kerur</p>
+          <p style={{ position: 'absolute', top: mm(28), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(4.23), fontWeight: 700, color: primaryColor, lineHeight: 1 }}>Dr. Shravankumar B. Kerur</p>
           <p style={{ position: 'absolute', top: mm(32.5), width: '100%', textAlign: 'center', margin: 0, fontSize: mm(2.82), color: '#555', fontStyle: 'italic', lineHeight: 1 }}>Principal, BGMIT</p>
         </div>
 
         {/* QR Code */}
-        <div style={{ position: 'absolute', top: mm(173), left: mm(12), zIndex: 2 }}>
+        <div style={{ position: 'absolute', top: mm(158), left: mm(12), zIndex: 2 }}>
           {qrCodeUrl ? (
             <img src={qrCodeUrl} alt="QR Code" style={{ width: mm(14), height: mm(14), border: `${mm(0.3)} solid #ccc` }} />
           ) : (
@@ -218,9 +260,9 @@ const Template2 = ({ participantName, eventName, certificateDate, certificateId,
         </div>
 
         {/* Certificate ID */}
-        <div style={{ position: 'absolute', top: mm(174), right: mm(12), zIndex: 2, textAlign: 'right' }}>
+        <div style={{ position: 'absolute', top: mm(164), right: mm(12), zIndex: 2, textAlign: 'right' }}>
           <p style={{ margin: 0, fontSize: mm(2.82), color: '#666', fontFamily: "'Courier New', monospace", lineHeight: 1 }}>Certificate ID:</p>
-          <p style={{ margin: `${mm(0.7)} 0 0`, fontSize: mm(2.82), color: '#1E3A8A', fontWeight: 700, fontFamily: "'Courier New', monospace", lineHeight: 1 }}>
+          <p style={{ margin: `${mm(0.7)} 0 0`, fontSize: mm(2.82), color: primaryColor, fontWeight: 700, fontFamily: "'Courier New', monospace", lineHeight: 1 }}>
             {certificateId || 'BGMIT-XXXX-XXXX'}
           </p>
         </div>

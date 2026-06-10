@@ -66,6 +66,59 @@ function buildRoboraceEmail(participantName, certificateId) {
   };
 }
 
+function buildPaperPresentationEmail(participantName, certificateId) {
+  return {
+    senderName: 'Vistara Paper Presentation Team',
+    subject: '📄 Your Paper Presentation Participation Certificate | BGMIT Mudhol',
+    htmlContent: `
+      <div style="background-color: #FAF9F6; padding: 25px 10px; font-family: 'Georgia', 'Times New Roman', serif; color: #1F2937; line-height: 1.6; font-size: 14px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #FFFDF7; border: 2px solid #D4AF37; border-top: 6px solid #1E3A8A; padding: 30px 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+          
+          <!-- Header with Emojis -->
+          <div style="text-align: center; margin-bottom: 25px;">
+            <span style="font-size: 40px; display: block; margin-bottom: 10px;">📄🎓📝</span>
+            <h2 style="color: #1E3A8A; margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;">
+              VISTARA 2026
+            </h2>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #D4AF37; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">
+              Paper Presentation Competition
+            </p>
+          </div>
+          
+          <p style="margin-bottom: 15px;">Dear <strong>${participantName}</strong>,</p>
+          
+          <p style="margin-bottom: 15px;">Greetings from the Department of Computer Science and Engineering, BGMIT Mudhol! 🎓</p>
+          
+          <p style="margin-bottom: 15px;">Congratulations on successfully presenting your research paper at the <strong>Paper Presentation Competition</strong> during <strong>VISTARA 2026</strong>. Your academic contribution, detailed research, and enthusiastic presentation were highly appreciated by the evaluation panel.</p>
+          
+          <p style="margin-bottom: 15px;">We are pleased to attach your official digital <strong>Certificate of Participation</strong> as a PDF to this email. It is fully authenticated and contains a unique verification ID and QR code.</p>
+          
+          <!-- Certificate ID block -->
+          <div style="background-color: #FAF9F6; border-left: 4px solid #D4AF37; border-right: 1px solid #E5E7EB; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+            <p style="margin: 0; font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Verified Certificate ID</p>
+            <p style="margin: 0; color: #1E3A8A; font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold;">${certificateId}</p>
+          </div>
+          
+          <p style="margin-bottom: 20px;">Thank you for contributing to the success of Vistara 2026. We wish you the very best in your academic pursuits and future research endeavors! 📝✨</p>
+          
+          <p style="margin-bottom: 25px; font-size: 13px; color: #4B5563;">You can also verify, download, or share your digital certificate at any time via this link: <a href="https://techathon-certificates.onrender.com/" style="color: #1E3A8A; font-weight: bold; text-decoration: underline;">Verify Portal</a>.</p>
+          
+          <!-- Divider -->
+          <div style="border-top: 1px solid #E5E7EB; margin: 20px 0;"></div>
+          
+          <!-- Footer -->
+          <p style="margin-bottom: 5px; color: #1F2937;">Best Regards,</p>
+          <p style="margin-top: 0; color: #4B5563; font-size: 13px;">
+            <strong style="color: #1E3A8A;">Organizing Committee — VISTARA 2026</strong><br/>
+            Department of Computer Science and Engineering<br/>
+            Biluru Gurubasava Mahaswamiji Institute of Technology, Mudhol
+          </p>
+        </div>
+      </div>
+    `,
+  };
+}
+
 function buildTechathonEmail(participantName, certificateId) {
   return {
     senderName: 'Techathon 1.0 Team',
@@ -104,6 +157,10 @@ function buildTechathonEmail(participantName, certificateId) {
 
 function getEmailTemplate(eventName, participantName, certificateId) {
   const normalized = (eventName || '').toUpperCase().trim();
+
+  if (normalized.includes('PAPER PRESENTATION')) {
+    return buildPaperPresentationEmail(participantName, certificateId);
+  }
 
   if (normalized.includes('ROBORACE')) {
     return buildRoboraceEmail(participantName, certificateId);
