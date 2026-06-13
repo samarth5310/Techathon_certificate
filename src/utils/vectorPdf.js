@@ -349,14 +349,14 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const l2p1 = 'during the'
     const wl2p1 = pdf.getTextWidth(l2p1)
-    const space1 = pdf.getTextWidth(' ')
+    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
     
     pdf.setFont('times', 'bold')
     const l2p2 = 'VISTARA : Paper Presentation Competition'
     const wl2p2 = pdf.getTextWidth(l2p2)
     
     pdf.setFont('times', 'normal')
-    const space2 = pdf.getTextWidth(' ')
+    const space2 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
     const l2p3 = 'organized by the Department of'
     const wl2p3 = pdf.getTextWidth(l2p3)
     
@@ -375,7 +375,7 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on'
     const wl3p1 = pdf.getTextWidth(l3p1)
-    const space3 = pdf.getTextWidth(' ')
+    const space3 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
     
     const finalDate = '29th April 2026'
     pdf.setFont('times', 'bold')
@@ -408,7 +408,7 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const r1a = 'has actively participated in the'
     const wr1a = pdf.getTextWidth(r1a)
-    const space1 = pdf.getTextWidth(' ')
+    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
     
     pdf.setFont('times', 'bold')
     const r1b = 'RoboRace'
@@ -441,7 +441,7 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const p1 = 'has actively participated in the'
     const w1 = pdf.getTextWidth(p1)
-    const space1 = pdf.getTextWidth(' ')
+    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
 
     const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
     pdf.setFont('times', 'bold')
