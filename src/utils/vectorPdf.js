@@ -346,28 +346,36 @@ export async function buildVectorPdf({
     pdf.setTextColor(...GREY)
     
     // Draw Line 3: during the VISTARA : Paper Presentation Competition organized by the Department of
-    const l2p1 = 'during the '
+    pdf.setFont('times', 'normal')
+    const l2p1 = 'during the'
     const wl2p1 = pdf.getTextWidth(l2p1)
+    const space1 = pdf.getTextWidth(' ')
+    
     pdf.setFont('times', 'bold')
     const l2p2 = 'VISTARA : Paper Presentation Competition'
     const wl2p2 = pdf.getTextWidth(l2p2)
+    
     pdf.setFont('times', 'normal')
-    const l2p3 = ' organized by the Department of'
+    const space2 = pdf.getTextWidth(' ')
+    const l2p3 = 'organized by the Department of'
     const wl2p3 = pdf.getTextWidth(l2p3)
     
-    const totalW2 = wl2p1 + wl2p2 + wl2p3
+    const totalW2 = wl2p1 + space1 + wl2p2 + space2 + wl2p3
     let startX2 = centerX - totalW2 / 2
     
+    pdf.setFont('times', 'normal')
     pdf.text(l2p1, startX2, bodyY3_temp)
     pdf.setFont('times', 'bold')
-    pdf.text(l2p2, startX2 + wl2p1, bodyY3_temp)
+    pdf.text(l2p2, startX2 + wl2p1 + space1, bodyY3_temp)
     pdf.setFont('times', 'normal')
-    pdf.text(l2p3, startX2 + wl2p1 + wl2p2, bodyY3_temp)
+    pdf.text(l2p3, startX2 + wl2p1 + space1 + wl2p2 + space2, bodyY3_temp)
 
     // Draw Line 4: Computer Science and Engineering, BGMIT, Mudhol, held on 29th April 2026.
     const bodyY4 = bodyY3_temp + pHeight
-    const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on '
+    pdf.setFont('times', 'normal')
+    const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on'
     const wl3p1 = pdf.getTextWidth(l3p1)
+    const space3 = pdf.getTextWidth(' ')
     
     const finalDate = '29th April 2026'
     pdf.setFont('times', 'bold')
@@ -377,14 +385,15 @@ export async function buildVectorPdf({
     const l3p3 = '.'
     const wl3p3 = pdf.getTextWidth(l3p3)
     
-    const totalW3 = wl3p1 + wl3p2 + wl3p3
+    const totalW3 = wl3p1 + space3 + wl3p2 + wl3p3
     let startX3 = centerX - totalW3 / 2
     
+    pdf.setFont('times', 'normal')
     pdf.text(l3p1, startX3, bodyY4)
     pdf.setFont('times', 'bold')
-    pdf.text(finalDate, startX3 + wl3p1, bodyY4)
+    pdf.text(finalDate, startX3 + wl3p1 + space3, bodyY4)
     pdf.setFont('times', 'normal')
-    pdf.text(l3p3, startX3 + wl3p1 + wl3p2, bodyY4)
+    pdf.text(l3p3, startX3 + wl3p1 + space3 + wl3p2, bodyY4)
 
     // Draw Line 5: This certificate is awarded in appreciation...
     const bodyY5 = bodyY4 + pHeight + 3.0
@@ -396,24 +405,28 @@ export async function buildVectorPdf({
   } else if (isRoborace) {
     // ── Roborace: Inverted pyramid layout (3 lines) ──
     // Line 1 (longest)
-    const r1a = 'has actively participated in the '
-    const r1b = 'RoboRace'
-    const r1c = ', on 29th April 2026. The event was organized by BGMIT, Mudhol.'
     pdf.setFont('times', 'normal')
+    const r1a = 'has actively participated in the'
     const wr1a = pdf.getTextWidth(r1a)
+    const space1 = pdf.getTextWidth(' ')
+    
     pdf.setFont('times', 'bold')
+    const r1b = 'RoboRace'
     const wr1b = pdf.getTextWidth(r1b)
+    
     pdf.setFont('times', 'normal')
+    const r1c = ', on 29th April 2026. The event was organized by BGMIT, Mudhol.'
     const wr1c = pdf.getTextWidth(r1c)
-    const totalR1 = wr1a + wr1b + wr1c
+    
+    const totalR1 = wr1a + space1 + wr1b + wr1c
     let rx1 = centerX - totalR1 / 2
-    pdf.text(r1a, rx1, bodyY1)
-    rx1 += wr1a
-    pdf.setFont('times', 'bold')
-    pdf.text(r1b, rx1, bodyY1)
-    rx1 += wr1b
+    
     pdf.setFont('times', 'normal')
-    pdf.text(r1c, rx1, bodyY1)
+    pdf.text(r1a, rx1, bodyY1)
+    pdf.setFont('times', 'bold')
+    pdf.text(r1b, rx1 + wr1a + space1, bodyY1)
+    pdf.setFont('times', 'normal')
+    pdf.text(r1c, rx1 + wr1a + space1 + wr1b, bodyY1)
 
     // Line 2 (medium)
     const bodyY2 = bodyY1 + lineHeight
@@ -425,8 +438,10 @@ export async function buildVectorPdf({
   } else {
     // ── Techathon / Default layout ──
     // Line 1: Normal + Bold + Normal
-    const p1 = 'has actively participated in the '
+    pdf.setFont('times', 'normal')
+    const p1 = 'has actively participated in the'
     const w1 = pdf.getTextWidth(p1)
+    const space1 = pdf.getTextWidth(' ')
 
     const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
     pdf.setFont('times', 'bold')
@@ -438,16 +453,15 @@ export async function buildVectorPdf({
       : `, on ${eventDate && eventDate !== 'N/A' ? eventDate : 'Date'}. The`
     const w3 = pdf.getTextWidth(p3)
 
-    const totalW1 = w1 + w2 + w3
+    const totalW1 = w1 + space1 + w2 + w3
     let startX1 = centerX - totalW1 / 2
 
-    pdf.text(p1, startX1, bodyY1)
-    startX1 += w1
-    pdf.setFont('times', 'bold')
-    pdf.text(p2, startX1, bodyY1)
-    startX1 += w2
     pdf.setFont('times', 'normal')
-    pdf.text(p3, startX1, bodyY1)
+    pdf.text(p1, startX1, bodyY1)
+    pdf.setFont('times', 'bold')
+    pdf.text(p2, startX1 + w1 + space1, bodyY1)
+    pdf.setFont('times', 'normal')
+    pdf.text(p3, startX1 + w1 + space1 + w2, bodyY1)
 
     // Line 2
     const bodyY2 = bodyY1 + lineHeight
