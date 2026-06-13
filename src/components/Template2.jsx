@@ -92,7 +92,7 @@ const Template2 = ({
         boxSizing: 'border-box',
         zIndex: 2,
       }}>
-        
+
         {/* Geometric Corner Accents (4mm inset from Ivory box) */}
         {[
           { top: mm(4), left: mm(4), transform: 'rotate(0deg)' },
@@ -201,11 +201,8 @@ const Template2 = ({
               <p style={{ margin: '4px auto 0', fontSize: mm(titleSizeMm), color: '#000000', fontWeight: 700, lineHeight: 1.35, width: mm(260) }}>
                 "{cleanTitle}"
               </p>
-              <p style={{ margin: '4px auto 0', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(240) }}>
-                during the <strong>VISTARA : Paper Presentation Competition</strong> organized by the Department of Computer Science and Engineering,
-              </p>
-              <p style={{ margin: '4px auto 0', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(240) }}>
-                BGMIT, Mudhol, held on <strong>29th April 2026</strong>.
+              <p style={{ margin: '4px auto 0', fontSize: mm(3.8), color: '#333', lineHeight: 1.35, width: mm(260) }}>
+                during the <strong>VISTARA : Paper Presentation Competition</strong> organized by the Department of CSE, BGMIT Mudhol.
               </p>
               <p style={{ margin: '10px auto 0', fontSize: mm(3.5), color: '#555', fontStyle: 'italic', lineHeight: 1.35, width: mm(240) }}>
                 This certificate is awarded in appreciation of their enthusiastic participation and academic contribution.

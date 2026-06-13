@@ -345,19 +345,19 @@ export async function buildVectorPdf({
     pdf.setFontSize(11)
     pdf.setTextColor(...GREY)
     
-    // Draw Line 3: during the VISTARA : Paper Presentation Competition organized by the Department of
+    // Draw Line 3: during the VISTARA : Paper Presentation Competition organized by the Department of CSE, BGMIT Mudhol.
     pdf.setFont('times', 'normal')
     const l2p1 = 'during the'
     const wl2p1 = pdf.getTextWidth(l2p1)
-    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
+    const space1 = 1.2
     
     pdf.setFont('times', 'bold')
     const l2p2 = 'VISTARA : Paper Presentation Competition'
     const wl2p2 = pdf.getTextWidth(l2p2)
     
     pdf.setFont('times', 'normal')
-    const space2 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
-    const l2p3 = 'organized by the Department of'
+    const space2 = 1.2
+    const l2p3 = 'organized by the Department of CSE, BGMIT Mudhol.'
     const wl2p3 = pdf.getTextWidth(l2p3)
     
     const totalW2 = wl2p1 + space1 + wl2p2 + space2 + wl2p3
@@ -370,33 +370,8 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     pdf.text(l2p3, startX2 + wl2p1 + space1 + wl2p2 + space2, bodyY3_temp)
 
-    // Draw Line 4: Computer Science and Engineering, BGMIT, Mudhol, held on 29th April 2026.
-    const bodyY4 = bodyY3_temp + pHeight
-    pdf.setFont('times', 'normal')
-    const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on'
-    const wl3p1 = pdf.getTextWidth(l3p1)
-    const space3 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
-    
-    const finalDate = '29th April 2026'
-    pdf.setFont('times', 'bold')
-    const wl3p2 = pdf.getTextWidth(finalDate)
-    
-    pdf.setFont('times', 'normal')
-    const l3p3 = '.'
-    const wl3p3 = pdf.getTextWidth(l3p3)
-    
-    const totalW3 = wl3p1 + space3 + wl3p2 + wl3p3
-    let startX3 = centerX - totalW3 / 2
-    
-    pdf.setFont('times', 'normal')
-    pdf.text(l3p1, startX3, bodyY4)
-    pdf.setFont('times', 'bold')
-    pdf.text(finalDate, startX3 + wl3p1 + space3, bodyY4)
-    pdf.setFont('times', 'normal')
-    pdf.text(l3p3, startX3 + wl3p1 + space3 + wl3p2, bodyY4)
-
-    // Draw Line 5: This certificate is awarded in appreciation...
-    const bodyY5 = bodyY4 + pHeight + 3.0
+    // Draw Line 4: This certificate is awarded in appreciation... (formerly Line 5)
+    const bodyY5 = bodyY3_temp + pHeight + 5.0
     pdf.setFont('times', 'italic')
     pdf.setFontSize(9.5)
     pdf.text('This certificate is awarded in appreciation of their enthusiastic participation and academic contribution.', centerX, bodyY5, { align: 'center' })
@@ -408,7 +383,7 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const r1a = 'has actively participated in the'
     const wr1a = pdf.getTextWidth(r1a)
-    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
+    const space1 = 1.2
     
     pdf.setFont('times', 'bold')
     const r1b = 'RoboRace'
@@ -441,7 +416,7 @@ export async function buildVectorPdf({
     pdf.setFont('times', 'normal')
     const p1 = 'has actively participated in the'
     const w1 = pdf.getTextWidth(p1)
-    const space1 = pdf.getTextWidth('a b') - pdf.getTextWidth('ab')
+    const space1 = 1.2
 
     const p2 = isTechathon1 ? '24-Hour Hackathon TECHATHON 1.0' : (eventName || 'TECHATHON 1.0')
     pdf.setFont('times', 'bold')

@@ -459,8 +459,8 @@ const GenerateCertificate = () => {
       {/* ═══ TICKER BAR ═══ */}
       <div className="brutal-ticker">
         <div className="brutal-ticker-inner">
-          {'TECHATHON 1.0 ░░ BGMIT INNOVATION COUNCIL ░░ 24-HOUR HACKATHON ░░ CERTIFICATE PORTAL ░░ '}
-          {'TECHATHON 1.0 ░░ BGMIT INNOVATION COUNCIL ░░ 24-HOUR HACKATHON ░░ CERTIFICATE PORTAL ░░ '}
+          {'BGMIT CERTIFICATE GENERATOR ░░ BGMIT INNOVATION COUNCIL ░░ CERTIFICATE PORTAL ░░ '}
+          {'BGMIT CERTIFICATE GENERATOR ░░ BGMIT INNOVATION COUNCIL ░░ CERTIFICATE PORTAL ░░ '}
         </div>
       </div>
 
@@ -474,11 +474,11 @@ const GenerateCertificate = () => {
           <div className="brutal-card" style={{ padding: '28px 24px' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
               <div>
-                <h1 className="brutal-heading" style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: 'var(--accent-red)', lineHeight: 1.1 }}>
-                  TECHATHON<span style={{ color: 'var(--accent-cyan)' }}>1.0</span>
+                <h1 className="brutal-heading" style={{ fontSize: 'clamp(24px, 4.5vw, 42px)', color: 'var(--accent-red)', lineHeight: 1.1 }}>
+                  BGMIT <span style={{ color: 'var(--accent-cyan)' }}>CERTIFICATE GENERATOR</span>
                 </h1>
                 <p className="mono" style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '8px' }}>
-                  // Hackathon Certificate Generation Portal
+                  // Official Certificate Generation & Verification Portal
                 </p>
               </div>
               
