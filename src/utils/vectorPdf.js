@@ -345,11 +345,11 @@ export async function buildVectorPdf({
     pdf.setFontSize(11)
     pdf.setTextColor(...GREY)
     
-    // Draw Line 3: during the Paper Presentation Competition organized by the Department of
+    // Draw Line 3: during the VISTARA : Paper Presentation Competition organized by the Department of
     const l2p1 = 'during the '
     const wl2p1 = pdf.getTextWidth(l2p1)
     pdf.setFont('times', 'bold')
-    const l2p2 = 'Paper Presentation Competition'
+    const l2p2 = 'VISTARA : Paper Presentation Competition'
     const wl2p2 = pdf.getTextWidth(l2p2)
     pdf.setFont('times', 'normal')
     const l2p3 = ' organized by the Department of'
@@ -369,7 +369,7 @@ export async function buildVectorPdf({
     const l3p1 = 'Computer Science and Engineering, BGMIT, Mudhol, held on '
     const wl3p1 = pdf.getTextWidth(l3p1)
     
-    const finalDate = eventDate && eventDate !== 'N/A' ? eventDate : '29th April 2026'
+    const finalDate = '29th April 2026'
     pdf.setFont('times', 'bold')
     const wl3p2 = pdf.getTextWidth(finalDate)
     
@@ -491,9 +491,11 @@ export async function buildVectorPdf({
 
   // ═══ 12. DATE & PLACE ═══
   const datePlaceY = bodyY3 + (sigY - bodyY3) / 2 // Centered between body content and signature lines
-  const displayDate = eventDate && eventDate !== 'N/A' && eventDate !== '' 
-    ? eventDate 
-    : (isPaperPres ? '29th April 2026' : (isRoborace ? '29 April 2026' : '01 May 2026'))
+  const displayDate = isPaperPres
+    ? '29th April 2026'
+    : (eventDate && eventDate !== 'N/A' && eventDate !== '' 
+        ? eventDate 
+        : (isRoborace ? '29 April 2026' : '01 May 2026'))
 
   pdf.setFont('times', 'bold')
   pdf.setFontSize(12)

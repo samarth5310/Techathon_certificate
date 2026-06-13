@@ -111,15 +111,24 @@ const AdminBulkEmail = () => {
         const qrUrl = await generateQRCodeDataUrl(certId, parseQueryDomain())
         
         // 2. Generate Vector PDF
-        const targetDate = p.eventDate || p.date
+        const eventLower = (p.eventName || '').toLowerCase()
         let formattedDate = 'N/A'
-        if (targetDate) {
-          if (typeof targetDate.toDate === 'function') {
-            formattedDate = targetDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' })
-          } else {
-            const parsed = new Date(targetDate)
-            if (!isNaN(parsed.getTime())) {
-              formattedDate = parsed.toLocaleDateString('en-IN', { dateStyle: 'long' })
+        if (eventLower.includes('paper presentation')) {
+          formattedDate = '29th April 2026'
+        } else if (eventLower.includes('roborace')) {
+          formattedDate = '29 April 2026'
+        } else if (eventLower.includes('techathon')) {
+          formattedDate = '01 May 2026'
+        } else {
+          const targetDate = p.eventDate || p.date
+          if (targetDate) {
+            if (typeof targetDate.toDate === 'function') {
+              formattedDate = targetDate.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' })
+            } else {
+              const parsed = new Date(targetDate)
+              if (!isNaN(parsed.getTime())) {
+                formattedDate = parsed.toLocaleDateString('en-IN', { dateStyle: 'long' })
+              }
             }
           }
         }

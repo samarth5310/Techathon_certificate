@@ -122,7 +122,12 @@ const VerifyCertificate = () => {
     fetchCertificate()
   }, [certificateId])
 
-  const formatDate = (value) => {
+  const formatDate = (value, eventName = '') => {
+    const lower = (eventName || '').toLowerCase()
+    if (lower.includes('paper presentation')) return '29th April 2026'
+    if (lower.includes('roborace')) return '29 April 2026'
+    if (lower.includes('techathon')) return '01 May 2026'
+
     if (!value) return 'N/A'
     if (typeof value?.toDate === 'function') {
       return value.toDate().toLocaleDateString('en-IN', { dateStyle: 'long' })
@@ -130,7 +135,11 @@ const VerifyCertificate = () => {
     if (value?.seconds) {
       return new Date(value.seconds * 1000).toLocaleDateString('en-IN', { dateStyle: 'long' })
     }
-    return new Date(value).toLocaleDateString('en-IN', { dateStyle: 'long' })
+    const dObj = new Date(value)
+    if (isNaN(dObj.getTime())) {
+      return 'N/A'
+    }
+    return dObj.toLocaleDateString('en-IN', { dateStyle: 'long' })
   }
 
   const handleSearch = (e) => {
@@ -314,7 +323,7 @@ const VerifyCertificate = () => {
                   <div className="data-cell">
                     <p className="brutal-label">DATE</p>
                     <p className="mono" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                      {formatDate(certificate.date)}
+                      {formatDate(certificate.date, certificate.eventName)}
                     </p>
                   </div>
 

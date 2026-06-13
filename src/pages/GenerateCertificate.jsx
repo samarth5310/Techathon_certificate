@@ -15,11 +15,12 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000 // Standard 24 hours
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000
 
 const toDisplayDate = (value, eventName = '') => {
+  const lower = (eventName || '').toLowerCase();
+  if (lower.includes('paper presentation')) return '29th April 2026';
+  if (lower.includes('roborace')) return '29 April 2026';
+  if (lower.includes('techathon')) return '01 May 2026';
+
   if (!value) {
-    const lower = (eventName || '').toLowerCase();
-    if (lower.includes('paper presentation')) return '29th April 2026';
-    if (lower.includes('roborace')) return '29 April 2026';
-    if (lower.includes('techathon')) return '01 May 2026';
     return '01 May 2026';
   }
   if (typeof value?.toDate === 'function') {
@@ -30,10 +31,6 @@ const toDisplayDate = (value, eventName = '') => {
   }
   const dObj = new Date(value);
   if (isNaN(dObj.getTime())) {
-    const lower = (eventName || '').toLowerCase();
-    if (lower.includes('paper presentation')) return '29th April 2026';
-    if (lower.includes('roborace')) return '29 April 2026';
-    if (lower.includes('techathon')) return '01 May 2026';
     return '01 May 2026';
   }
   return dObj.toLocaleDateString('en-IN', { dateStyle: 'long' })
